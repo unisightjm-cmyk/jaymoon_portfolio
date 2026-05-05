@@ -14,8 +14,12 @@ window.UI_ARCHIVE = (function(){
   const SUPABASE_URL = "https://nhpxefusirwpanhoeire.supabase.co";
   const SUPABASE_KEY = "sb_publishable_Hkp_oaUWJ0pahYQcqqphFA_06uqDeVc";
   let supabaseClient = null;
-  if(window.supabase) {
-    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  try {
+    if(window.supabase) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    }
+  } catch(e) {
+    console.error("Supabase init error:", e);
   }
 
   /* ---------- defaults ---------- */
@@ -125,7 +129,7 @@ window.UI_ARCHIVE = (function(){
     return over === undefined ? base : over;
   }
 
-  function load(){
+  function loadLocal(){
     try{
       const raw = localStorage.getItem(KEY);
       if(!raw) return JSON.parse(JSON.stringify(DEFAULTS));
@@ -185,14 +189,14 @@ window.UI_ARCHIVE = (function(){
 
   /* admin auth */
   function getPassword(){
-    const data = load();
+    const data = loadLocal();
     return (data.admin && data.admin.password) || DEFAULTS.admin.password;
   }
   function setPassword(p){
-    const data = load();
+    const data = loadLocal();
     data.admin = data.admin || {};
     data.admin.password = p;
-    save(data);
+    saveLocal(data);
   }
   function isLoggedIn(){ return sessionStorage.getItem(SESSION_KEY) === 'ok'; }
   function login(p){

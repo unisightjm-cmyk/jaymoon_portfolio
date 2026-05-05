@@ -450,6 +450,21 @@
 </style>
 </head>
 <body>
+<script>
+  // On-screen Error Logger for Debugging
+  window.addEventListener('error', function(e) {
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'position:fixed; top:0; left:0; right:0; background:rgba(255,0,0,0.8); color:white; z-index:99999; padding:20px; font-family:monospace; white-space:pre-wrap; font-size:14px; max-height:50vh; overflow-y:auto;';
+    errDiv.innerHTML = '<strong>ERROR:</strong> ' + e.message + '<br>Line: ' + e.lineno + ' in ' + e.filename;
+    document.body.appendChild(errDiv);
+  });
+  window.addEventListener('unhandledrejection', function(e) {
+    const errDiv = document.createElement('div');
+    errDiv.style.cssText = 'position:fixed; bottom:0; left:0; right:0; background:rgba(200,50,0,0.8); color:white; z-index:99999; padding:20px; font-family:monospace; white-space:pre-wrap; font-size:14px; max-height:50vh; overflow-y:auto;';
+    errDiv.innerHTML = '<strong>PROMISE REJECTION:</strong> ' + (e.reason && e.reason.stack ? e.reason.stack : e.reason);
+    document.body.appendChild(errDiv);
+  });
+</script>
 
 <div class="grain"></div>
 <div class="vignette"></div>
