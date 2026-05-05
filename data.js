@@ -79,7 +79,7 @@ window.UI_ARCHIVE = (function(){
       { id: "about",      shelf: "top",    type: "magnifier",action: "panel", url: "" , label: { ko: "소개",           en: "About" } },
       { id: "insights",   shelf: "top",    type: "notebook", action: "link",  url: "archive.html" , label: { ko: "인사이트",       en: "Insights" } },
       { id: "sound",      shelf: "bottom", type: "headphones",action:"panel", url: "" , label: { ko: "사운드",         en: "Sound" } },
-      { id: "journey",    shelf: "bottom", type: "laptop",   action: "panel", url: "" , label: { ko: "Vibe Coding",           en: "Vibe Coding" } },
+      { id: "journey",    shelf: "bottom", type: "laptop",   action: "link", url: "vibecoding.html" , label: { ko: "Vibe Coding",           en: "Vibe Coding" } },
       { id: "contact",    shelf: "bottom", type: "pen",      action: "panel", url: "" , label: { ko: "편지 쓰기",           en: "Write a Letter" } }
     ],
 
