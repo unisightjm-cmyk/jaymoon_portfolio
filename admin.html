@@ -303,26 +303,50 @@
     <div class="pane" data-pane="posts">
       <div class="card">
         <div class="card-head"><h3>인사이트 글쓰기</h3><span class="meta">archive.html 표시용</span></div>
-        <div class="field">
-          <label>글 제목</label>
-          <input id="postTitle" placeholder="제목을 입력하세요" />
+        
+        <div style="display:flex; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--line); padding-bottom:10px;">
+          <button type="button" class="post-lang-btn on" data-lang="ko" style="background:transparent; color:var(--gold); border:1px solid var(--gold); padding:4px 12px; border-radius:4px; cursor:pointer;">한국어</button>
+          <button type="button" class="post-lang-btn" data-lang="en" style="background:transparent; color:var(--sub); border:1px solid var(--line); padding:4px 12px; border-radius:4px; cursor:pointer;">English</button>
         </div>
+
+        <div class="post-lang-group" data-lang="ko">
+          <div class="field">
+            <label>글 제목 (KO)</label>
+            <input id="postTitle_ko" placeholder="제목을 입력하세요" />
+          </div>
+          <div class="field">
+            <label>본문 내용 (KO)</label>
+            <textarea id="postBody_ko" rows="6" placeholder="내용을 입력하세요 (줄바꿈 허용)"></textarea>
+          </div>
+          <div class="field">
+            <label>사진 캡션 (KO)</label>
+            <input id="postCaption_ko" placeholder="사진 아래 들어갈 캡션" />
+          </div>
+        </div>
+
+        <div class="post-lang-group" data-lang="en" style="display:none;">
+          <div class="field">
+            <label>Title (EN)</label>
+            <input id="postTitle_en" placeholder="Enter title" />
+          </div>
+          <div class="field">
+            <label>Body Content (EN)</label>
+            <textarea id="postBody_en" rows="6" placeholder="Enter content"></textarea>
+          </div>
+          <div class="field">
+            <label>Photo Caption (EN)</label>
+            <input id="postCaption_en" placeholder="Caption for the photo" />
+          </div>
+        </div>
+
         <div class="field">
           <label>작성일 / 게시일 (과거 날짜 입력 가능)</label>
           <input type="date" id="postDate" />
         </div>
         <div class="field">
-          <label>본문 내용</label>
-          <textarea id="postBody" rows="6" placeholder="내용을 입력하세요 (줄바꿈 허용)"></textarea>
-        </div>
-        <div class="field">
           <label>이미지 업로드 (선택, 최대 2MB)</label>
           <input type="file" id="postImageUpload" accept="image/*" />
           <img id="postImagePreview" style="max-width:200px; display:none; margin-top:10px; border-radius:4px; border:1px solid var(--line);" />
-        </div>
-        <div class="field">
-          <label>사진 캡션 (선택)</label>
-          <input id="postCaption" placeholder="사진 아래 들어갈 캡션" />
         </div>
         <button id="addPostBtn" style="background:var(--gold); color:#1a1a1a; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer; margin-top:10px;">새 글 저장하기</button>
       </div>
@@ -341,10 +365,33 @@
           <h2>새 Vibe Coding 산출물 추가</h2>
         </div>
         <div class="card-body">
-          <div class="form-group">
-            <label>프로젝트 제목</label>
-            <input type="text" id="vibeTitle" placeholder="예: My First AI Chrome Extension">
+          <div style="display:flex; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--line); padding-bottom:10px;">
+            <button type="button" class="vibe-lang-btn on" data-lang="ko" style="background:transparent; color:var(--gold); border:1px solid var(--gold); padding:4px 12px; border-radius:4px; cursor:pointer;">한국어</button>
+            <button type="button" class="vibe-lang-btn" data-lang="en" style="background:transparent; color:var(--sub); border:1px solid var(--line); padding:4px 12px; border-radius:4px; cursor:pointer;">English</button>
           </div>
+
+          <div class="vibe-lang-group" data-lang="ko">
+            <div class="form-group">
+              <label>프로젝트 제목 (KO)</label>
+              <input type="text" id="vibeTitle_ko" placeholder="예: 나의 첫 AI 프로그램">
+            </div>
+            <div class="form-group">
+              <label>내용 (KO)</label>
+              <textarea id="vibeBody_ko" rows="6" placeholder="자유롭게 작성하세요..."></textarea>
+            </div>
+          </div>
+
+          <div class="vibe-lang-group" data-lang="en" style="display:none;">
+            <div class="form-group">
+              <label>Project Title (EN)</label>
+              <input type="text" id="vibeTitle_en" placeholder="e.g. My First AI App">
+            </div>
+            <div class="form-group">
+              <label>Content (EN)</label>
+              <textarea id="vibeBody_en" rows="6" placeholder="Write freely..."></textarea>
+            </div>
+          </div>
+
           <div class="form-group">
             <label>게시일 (선택)</label>
             <input type="date" id="vibeDate">
@@ -355,10 +402,6 @@
             <div id="vibeImagePreview" style="margin-top:10px; max-width:200px; max-height:150px; background:var(--bg); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:4px;">
               <span style="font-size:12px; color:var(--sub);">미리보기</span>
             </div>
-          </div>
-          <div class="form-group">
-            <label>내용 (설명, 역할, 배운 점 등)</label>
-            <textarea id="vibeBody" rows="6" placeholder="자유롭게 작성하세요..."></textarea>
           </div>
           <button id="addVibeBtn" style="background:var(--gold); color:#1a1a1a; padding:12px 24px; border:none; border-radius:4px; font-weight:bold; font-family:var(--sans); cursor:pointer;">산출물 저장하기</button>
         </div>
@@ -665,9 +708,12 @@
   });
 
   document.getElementById('addVibeBtn')?.addEventListener('click', async ()=>{
-    const title = document.getElementById('vibeTitle').value.trim();
-    const body = document.getElementById('vibeBody').value.trim();
-    if(!title && !body) return alert("제목이나 내용을 입력해주세요.");
+    const t_ko = document.getElementById('vibeTitle_ko').value.trim();
+    const b_ko = document.getElementById('vibeBody_ko').value.trim();
+    const t_en = document.getElementById('vibeTitle_en').value.trim();
+    const b_en = document.getElementById('vibeBody_en').value.trim();
+
+    if(!t_ko && !t_en) return alert("제목을 입력해주세요.");
     
     let dateVal = document.getElementById('vibeDate').value;
     if(!dateVal) dateVal = new Date().toISOString();
@@ -675,14 +721,19 @@
 
     const vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
     
+    const vibeData = {
+      date: dateVal,
+      title: { ko: t_ko, en: t_en },
+      body: { ko: b_ko, en: b_en },
+      image: currentVibeImageData
+    };
+
     if (editingVibeId) {
       const idx = vibes.findIndex(v => v.id === editingVibeId);
       if (idx !== -1) {
         vibes[idx] = {
           ...vibes[idx],
-          date: dateVal,
-          title,
-          body,
+          ...vibeData,
           image: currentVibeImageData || vibes[idx].image
         };
       }
@@ -692,18 +743,17 @@
     } else {
       vibes.push({
         id: Date.now().toString(),
-        date: dateVal,
-        title,
-        body,
-        image: currentVibeImageData
+        ...vibeData
       });
     }
     await UI_ARCHIVE.saveItemAsync('ui.archive.vibes', vibes);
     
     // clear form
-    document.getElementById('vibeTitle').value = '';
+    ['ko','en'].forEach(l => {
+      document.getElementById('vibeTitle_'+l).value = '';
+      document.getElementById('vibeBody_'+l).value = '';
+    });
     document.getElementById('vibeDate').value = '';
-    document.getElementById('vibeBody').value = '';
     document.getElementById('vibeImageInput').value = '';
     document.getElementById('vibeImagePreview').innerHTML = '<span style="font-size:12px; color:var(--sub);">미리보기</span>';
     currentVibeImageData = null;
@@ -722,12 +772,13 @@
     vibes.sort((a,b) => new Date(b.date) - new Date(a.date));
     let html = '';
     vibes.forEach(v => {
+      const title = v.title?.ko || v.title?.en || v.title || '(제목 없음)';
       const d = new Date(v.date);
       const ds = isNaN(d) ? '' : d.toLocaleDateString();
       html += `
         <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--line); border-radius:4px; background:rgba(0,0,0,0.1);">
           <div style="flex:1; margin-right:10px;">
-            <div style="font-size:14px; font-weight:bold; margin-bottom:4px; color:var(--cream);">${v.title || '(제목 없음)'}</div>
+            <div style="font-size:14px; font-weight:bold; margin-bottom:4px; color:var(--cream);">${title}</div>
             <div style="font-size:11px; color:var(--sub);">${ds}</div>
           </div>
           <div style="display:flex; gap:6px;">
@@ -754,8 +805,11 @@
     if (!vibe) return;
 
     editingVibeId = id;
-    document.getElementById('vibeTitle').value = vibe.title || '';
-    document.getElementById('vibeBody').value = vibe.body || '';
+    ['ko','en'].forEach(l => {
+      document.getElementById('vibeTitle_'+l).value = (vibe.title?.[l] || (l==='ko'?vibe.title:'')) || '';
+      document.getElementById('vibeBody_'+l).value = (vibe.body?.[l] || (l==='ko'?vibe.body:'')) || '';
+    });
+
     if (vibe.date) {
       document.getElementById('vibeDate').value = new Date(vibe.date).toISOString().slice(0, 10);
     }
@@ -775,7 +829,33 @@
     document.querySelector('#pane-vibes').scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /* ---------- posts management ---------- */
+  // Lang tabs for posts/vibes
+  document.querySelectorAll('.post-lang-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.post-lang-btn').forEach(b => {
+        b.classList.toggle('on', b === btn);
+        b.style.color = b === btn ? 'var(--gold)' : 'var(--sub)';
+        b.style.borderColor = b === btn ? 'var(--gold)' : 'var(--line)';
+      });
+      document.querySelectorAll('.post-lang-group').forEach(g => {
+        g.style.display = g.dataset.lang === btn.dataset.lang ? 'block' : 'none';
+      });
+    };
+  });
+  document.querySelectorAll('.vibe-lang-btn').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('.vibe-lang-btn').forEach(b => {
+        b.classList.toggle('on', b === btn);
+        b.style.color = b === btn ? 'var(--gold)' : 'var(--sub)';
+        b.style.borderColor = b === btn ? 'var(--gold)' : 'var(--line)';
+      });
+      document.querySelectorAll('.vibe-lang-group').forEach(g => {
+        g.style.display = g.dataset.lang === btn.dataset.lang ? 'block' : 'none';
+      });
+    };
+  });
+
+  /* ---------- messages ---------- */
   let currentPostImageData = null;
   let editingPostId = null;
   document.getElementById('postImageUpload')?.addEventListener('change', e=>{
@@ -792,9 +872,12 @@
   });
 
   document.getElementById('addPostBtn')?.addEventListener('click', async ()=>{
-    const title = document.getElementById('postTitle').value.trim();
-    const body = document.getElementById('postBody').value.trim();
-    if(!title && !body) return alert("제목이나 내용을 입력해주세요.");
+    const t_ko = document.getElementById('postTitle_ko').value.trim();
+    const b_ko = document.getElementById('postBody_ko').value.trim();
+    const t_en = document.getElementById('postTitle_en').value.trim();
+    const b_en = document.getElementById('postBody_en').value.trim();
+    
+    if(!t_ko && !t_en) return alert("제목을 입력해주세요.");
     
     let dateVal = document.getElementById('postDate').value;
     if(!dateVal) dateVal = new Date().toISOString();
@@ -802,16 +885,21 @@
 
     const posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
     
+    const postData = {
+      date: dateVal,
+      title: { ko: t_ko, en: t_en },
+      body: { ko: b_ko, en: b_en },
+      image: currentPostImageData,
+      caption: { ko: document.getElementById('postCaption_ko').value.trim(), en: document.getElementById('postCaption_en').value.trim() }
+    };
+
     if (editingPostId) {
       const idx = posts.findIndex(p => p.id === editingPostId);
       if (idx !== -1) {
         posts[idx] = {
           ...posts[idx],
-          date: dateVal,
-          title,
-          body,
-          image: currentPostImageData || posts[idx].image,
-          caption: document.getElementById('postCaption').value.trim()
+          ...postData,
+          image: currentPostImageData || posts[idx].image
         };
       }
       editingPostId = null;
@@ -820,20 +908,18 @@
     } else {
       posts.push({
         id: Date.now().toString(),
-        date: dateVal,
-        title,
-        body,
-        image: currentPostImageData,
-        caption: document.getElementById('postCaption').value.trim()
+        ...postData
       });
     }
     await UI_ARCHIVE.saveItemAsync('ui.archive.posts', posts);
     
     // clear form
-    document.getElementById('postTitle').value = '';
+    ['ko','en'].forEach(l => {
+      document.getElementById('postTitle_'+l).value = '';
+      document.getElementById('postBody_'+l).value = '';
+      document.getElementById('postCaption_'+l).value = '';
+    });
     document.getElementById('postDate').value = '';
-    document.getElementById('postBody').value = '';
-    document.getElementById('postCaption').value = '';
     document.getElementById('postImageUpload').value = '';
     document.getElementById('postImagePreview').style.display = 'none';
     currentPostImageData = null;
@@ -849,18 +935,21 @@
       list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center;">작성된 글이 없습니다.</div>';
       return;
     }
-    const html = posts.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => `
-      <div style="background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div style="flex:1; margin-right:10px;">
-          <div style="font-weight:bold; color:var(--cream);">${p.title || '(제목 없음)'}</div>
-          <div style="font-size:11px; color:var(--sub); margin-top:4px;">${new Date(p.date).toLocaleString()}</div>
+    const html = posts.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => {
+      const title = p.title?.ko || p.title?.en || p.title || '(제목 없음)';
+      return `
+        <div style="background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="flex:1; margin-right:10px;">
+            <div style="font-weight:bold; color:var(--cream);">${title}</div>
+            <div style="font-size:11px; color:var(--sub); margin-top:4px;">${new Date(p.date).toLocaleString()}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="editPost('${p.id}')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">수정</button>
+            <button onclick="deletePost('${p.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">삭제</button>
+          </div>
         </div>
-        <div style="display:flex; gap:6px;">
-          <button onclick="editPost('${p.id}')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">수정</button>
-          <button onclick="deletePost('${p.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">삭제</button>
-        </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
     list.innerHTML = html;
   }
 
@@ -878,9 +967,12 @@
     if (!post) return;
 
     editingPostId = id;
-    document.getElementById('postTitle').value = post.title || '';
-    document.getElementById('postBody').value = post.body || '';
-    document.getElementById('postCaption').value = post.caption || '';
+    ['ko','en'].forEach(l => {
+      document.getElementById('postTitle_'+l).value = (post.title?.[l] || (l==='ko'?post.title:'')) || '';
+      document.getElementById('postBody_'+l).value = (post.body?.[l] || (l==='ko'?post.body:'')) || '';
+      document.getElementById('postCaption_'+l).value = (post.caption?.[l] || (l==='ko'?post.caption:'')) || '';
+    });
+
     if (post.date) {
       document.getElementById('postDate').value = new Date(post.date).toISOString().slice(0, 10);
     }

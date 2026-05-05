@@ -207,8 +207,10 @@ window.UI_ARCHIVE = (function(){
 
   return {
     DEFAULTS, load: loadLocal, save: saveLocal, reset,
-    loadAsync, saveAsync, loadItemAsync, saveItemAsync,
-    getLang, setLang,
+    loadAsync, saveAsync, loadItemAsync,
+    saveItemAsync,
+    getLang: () => localStorage.getItem(LANG_KEY) || 'ko',
+    setLang: (l) => localStorage.setItem(LANG_KEY, l),
     getPassword, setPassword,
     isLoggedIn, login, logout
   };

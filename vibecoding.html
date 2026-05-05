@@ -498,28 +498,40 @@
   }
 
   function updateContent(post) {
+    const lang = UI_ARCHIVE.getLang();
     const d = new Date(post.date);
-    const dateStr = isNaN(d) ? '' : d.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+    const dateStr = isNaN(d) ? '' : d.toLocaleDateString(lang === 'ko' ? 'ko-KR' : 'en-US', { year:'numeric', month:'long', day:'numeric' });
     let rel = '';
     if (!isNaN(d)) {
       const diff = Math.floor((Date.now() - d) / 86400000);
-      if (diff >= 365) rel = Math.floor(diff/365) + '년 전';
-      else if (diff >= 30) rel = Math.floor(diff/30) + '개월 전';
-      else if (diff > 0)  rel = diff + '일 전';
-      else rel = '오늘';
+      if (lang === 'ko') {
+        if (diff >= 365) rel = Math.floor(diff/365) + '년 전';
+        else if (diff >= 30) rel = Math.floor(diff/30) + '개월 전';
+        else if (diff > 0)  rel = diff + '일 전';
+        else rel = '오늘';
+      } else {
+        if (diff >= 365) rel = Math.floor(diff/365) + 'y ago';
+        else if (diff >= 30) rel = Math.floor(diff/30) + 'm ago';
+        else if (diff > 0)  rel = diff + 'd ago';
+        else rel = 'Today';
+      }
     }
 
-    const bodyHtml = (post.body || '')
+    const title = (post.title?.[lang] || (lang === 'ko' ? post.title : '')) || 'Untitled';
+    const body = (post.body?.[lang] || (lang === 'ko' ? post.body : '')) || '';
+
+    const bodyHtml = body
       .split(/\n\n+/)
       .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`)
       .join('');
 
     document.getElementById('postContent').innerHTML = `
       <div class="post-eyebrow">Vibe Coding</div>
-      <h1 class="post-title">${post.title || 'Untitled'}</h1>
+      <h1 class="post-title">${title}</h1>
       <div class="post-meta">
         <span>${dateStr}</span>
-        ${rel ? `<span class="dot">·</span><span class="rel">${rel}</span>` : ''}
+        <span class="dot"></span>
+        <span style="color:var(--gold)">${rel}</span>
       </div>
       <div class="post-body">${bodyHtml}</div>
     `;
