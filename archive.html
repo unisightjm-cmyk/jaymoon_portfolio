@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiet Archive — Insights</title>
+<style>
+  :root {
+    --bg: #1c1512;
+    --paper: #E6DFD3;
+    --paper-dark: #D1C5B4;
+    --text: #2A241D;
+    --sub: rgba(42,36,29,0.6);
+    --gold: #C9A86C;
+    --serif: "Crimson Text", "KoPub Batang", "Nanum Myeongjo", serif;
+    --sans: "Inter", "Pretendard", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 20px;
+    background: radial-gradient(circle at 50% 30%, #2c2218 0%, #16110d 100%);
+    color: var(--text);
+    font-family: var(--serif);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  /* top nav */
+  .header {
+    width: 100%; max-width: 900px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 40px;
+  }
+  .back-btn {
+    color: var(--gold); text-decoration: none; font-family: var(--sans);
+    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+    display: flex; align-items: center; gap: 8px; opacity: 0.8; transition: opacity 0.3s;
+  }
+  .back-btn:hover { opacity: 1; }
+  
+  /* book layout */
+  .book-container {
+    width: 100%; max-width: 900px;
+    perspective: 2000px;
+    position: relative;
+    margin-bottom: 60px;
+  }
+  .book {
+    display: flex;
+    width: 100%;
+    background: #110d0a;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+    transform-style: preserve-3d;
+    animation: openBook 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    transform: rotateX(10deg);
+  }
+  @keyframes openBook {
+    0% { transform: rotateX(30deg) translateY(50px) scale(0.9); opacity: 0; }
+    100% { transform: rotateX(5deg) translateY(0) scale(1); opacity: 1; }
+  }
+
+  .page {
+    flex: 1;
+    background: linear-gradient(to right, var(--paper-dark) 0%, var(--paper) 4%, var(--paper) 96%, var(--paper-dark) 100%);
+    min-height: 600px;
+    position: relative;
+    box-shadow: inset 0 0 40px rgba(0,0,0,0.05);
+  }
+  .page.left {
+    border-radius: 4px 0 0 4px;
+    border-right: 1px solid rgba(0,0,0,0.15);
+    padding: 40px;
+    display: flex; flex-direction: column;
+  }
+  .page.right {
+    border-radius: 0 4px 4px 0;
+    border-left: 1px solid rgba(255,255,255,0.4);
+    padding: 50px 60px;
+    overflow-y: auto;
+  }
+
+  /* photo area */
+  .photo-frame {
+    width: 100%; flex: 1;
+    background: rgba(0,0,0,0.05);
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: inset 0 2px 10px rgba(0,0,0,0.05);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; overflow: hidden;
+  }
+  .photo-frame img {
+    width: 100%; height: 100%; object-fit: contain;
+    filter: sepia(0.2) contrast(0.9) brightness(0.95);
+    cursor: zoom-in;
+  }
+  .photo-caption {
+    margin-top: 16px; font-family: var(--sans); font-size: 11px;
+    color: var(--sub); text-align: center; letter-spacing: 0.1em;
+  }
+
+  /* text area */
+  .post-date {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.15em;
+    color: var(--sub); text-transform: uppercase; margin-bottom: 16px;
+    display: block;
+  }
+  .post-title {
+    font-size: 26px; font-weight: normal; margin: 0 0 30px 0;
+    line-height: 1.3; color: #1a1a1a;
+  }
+  .post-body {
+    font-size: 15px; line-height: 1.8; color: #333;
+    white-space: pre-wrap;
+  }
+  .post-body p { margin-top: 0; margin-bottom: 1.5em; }
+
+  /* post navigation */
+  .post-nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);
+  }
+  .post-nav button {
+    background: transparent; border: none; font-family: var(--sans);
+    font-size: 11px; letter-spacing: 0.1em; color: var(--sub);
+    cursor: pointer; transition: color 0.2s; text-transform: uppercase;
+  }
+  .post-nav button:hover:not(:disabled) { color: var(--text); }
+  .post-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .empty-state {
+    text-align: center; color: var(--sub); font-style: italic;
+    margin-top: 100px;
+  }
+
+  @media(max-width: 800px) {
+    .book { flex-direction: column; }
+    .page.left, .page.right { min-height: 400px; border: none; border-radius: 4px; }
+    .page.left { border-bottom: 1px solid rgba(0,0,0,0.1); padding: 20px; }
+    .page.right { padding: 30px 20px; }
+  }
+
+  /* lightbox */
+  .lightbox {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.9); z-index: 9999;
+    display: none; flex-direction: column; align-items: center; justify-content: center;
+    padding: 40px; opacity: 0; transition: opacity 0.3s;
+  }
+  .lightbox.show { display: flex; opacity: 1; }
+  .lightbox img {
+    max-width: 100%; max-height: 80vh; object-fit: contain;
+    border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .lightbox-controls {
+    margin-top: 20px; display: flex; gap: 20px;
+  }
+  .lightbox-btn {
+    background: transparent; border: 1px solid var(--gold); color: var(--gold);
+    padding: 10px 20px; border-radius: 4px; font-family: var(--sans); font-size: 12px;
+    letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .lightbox-btn:hover { background: var(--gold); color: #1a1a1a; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="index.html" class="back-btn">← 돌아가기 / Back</a>
+  <div style="font-size: 14px; color: var(--gold); font-style: italic;">Insights Archive</div>
+</div>
+
+<div class="book-container" id="bookContainer">
+  <div class="book">
+    <div class="page left">
+      <div class="photo-frame" id="postPhoto">
+        <div style="color:var(--sub); font-style:italic;">No Image</div>
+      </div>
+      <div class="photo-caption" id="postCaption"></div>
+    </div>
+    <div class="page right">
+      <div id="postContent">
+        <!-- Content injected here -->
+      </div>
+      <div class="post-nav">
+        <button id="prevBtn">← Previous</button>
+        <span id="pageIndicator" style="font-family:var(--sans); font-size:10px; color:var(--sub);"></span>
+        <button id="nextBtn">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lightbox" id="lightbox">
+  <img id="lightboxImg" src="" alt="Full size image" />
+  <div class="lightbox-controls">
+    <a href="#" id="lightboxDownload" download="insight_image.png" class="lightbox-btn">사진 다운로드</a>
+    <button id="lightboxClose" class="lightbox-btn">닫기</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="data.js"></script>
+<script>
+  let posts = [];
+  let currentIndex = 0;
+
+  async function loadPosts() {
+    try {
+      posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+      if(posts && posts.length > 0) {
+        posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+      }
+    } catch(e) { console.error(e); }
+    renderPost();
+  }
+
+  function renderPost() {
+    const contentEl = document.getElementById('postContent');
+    const photoEl = document.getElementById('postPhoto');
+    const captionEl = document.getElementById('postCaption');
+    
+    if(posts.length === 0) {
+      photoEl.innerHTML = '<div style="color:var(--sub); font-style:italic;">빈 페이지</div>';
+      captionEl.textContent = '';
+      contentEl.innerHTML = '<div class="empty-state">아직 작성된 인사이트가 없습니다.</div>';
+      document.getElementById('prevBtn').disabled = true;
+      document.getElementById('nextBtn').disabled = true;
+      document.getElementById('pageIndicator').textContent = '0 / 0';
+      return;
+    }
+
+    const post = posts[currentIndex];
+    
+    if(post.image) {
+      photoEl.innerHTML = `<img src="${post.image}" alt="Insight visual" onclick="openLightbox('${post.image}')" />`;
+    } else {
+      photoEl.innerHTML = '<div style="color:var(--sub); font-style:italic;">여백</div>';
+    }
+    
+    captionEl.textContent = post.caption || '';
+    
+    const d = new Date(post.date);
+    const dateStr = isNaN(d.getTime()) ? '' : d.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+    
+    // Calculate relative time
+    let relativeStr = '';
+    if(!isNaN(d.getTime())) {
+      const now = new Date();
+      const diffMs = now - d;
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const diffMonths = Math.floor(diffDays / 30);
+      const diffYears = Math.floor(diffDays / 365);
+      
+      if (diffYears > 0) relativeStr = `${diffYears}년 전`;
+      else if (diffMonths > 0) relativeStr = `${diffMonths}개월 전`;
+      else if (diffDays > 0) relativeStr = `${diffDays}일 전`;
+      else relativeStr = `오늘`;
+    }
+
+    contentEl.innerHTML = `
+      <span class="post-date">${dateStr} <span style="color:var(--gold); margin-left:8px; text-transform:none;">${relativeStr}</span></span>
+      <h1 class="post-title">${post.title || 'Untitled'}</h1>
+      <div class="post-body">${post.body ? post.body.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('') : ''}</div>
+    `;
+
+    document.getElementById('prevBtn').disabled = (currentIndex === 0);
+    document.getElementById('nextBtn').disabled = (currentIndex === posts.length - 1);
+    document.getElementById('pageIndicator').textContent = `${currentIndex + 1} / ${posts.length}`;
+  }
+
+  document.getElementById('prevBtn').addEventListener('click', () => {
+    if(currentIndex > 0) { currentIndex--; renderPost(); }
+  });
+  document.getElementById('nextBtn').addEventListener('click', () => {
+    if(currentIndex < posts.length - 1) { currentIndex++; renderPost(); }
+  });
+
+  // Lightbox logic
+  function openLightbox(src) {
+    const lb = document.getElementById('lightbox');
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightboxDownload').href = src;
+    lb.style.display = 'flex';
+    // tiny delay for transition
+    setTimeout(() => lb.classList.add('show'), 10);
+  }
+  function closeLightbox() {
+    const lb = document.getElementById('lightbox');
+    lb.classList.remove('show');
+    setTimeout(() => lb.style.display = 'none', 300);
+  }
+  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
+  document.getElementById('lightbox').addEventListener('click', (e) => {
+    if(e.target.id === 'lightbox') closeLightbox();
+  });
+
+  window.addEventListener('DOMContentLoaded', loadPosts);
+</script>
+
+</body>
+</html>

@@ -191,12 +191,15 @@
     <div class="brand">Quiet <em>Archive</em></div>
     <div class="role">Admin Dashboard</div>
     <nav id="sideNav">
-      <a data-pane="brand" class="on"><span class="num">01</span><span>브랜드 · 네비</span></a>
-      <a data-pane="founder"><span class="num">02</span><span>Founder 카드</span></a>
-      <a data-pane="shelf"><span class="num">03</span><span>책장 헤더</span></a>
-      <a data-pane="objects"><span class="num">04</span><span>오브제 7개</span></a>
-      <a data-pane="panels"><span class="num">05</span><span>패널 콘텐츠</span></a>
-      <a data-pane="settings"><span class="num">06</span><span>비밀번호 · 백업</span></a>
+      <a data-pane="brand" class="on"><span>브랜드 · 네비</span></a>
+      <a data-pane="founder"><span>Founder 카드</span></a>
+      <a data-pane="photo"><span>메인 사진</span></a>
+      <a data-pane="shelf"><span>책장 헤더</span></a>
+      <a data-pane="objects"><span>오브제 설정</span></a>
+      <a data-pane="panels"><span>패널 콘텐츠</span></a>
+      <a data-pane="posts"><span>인사이트 글 관리</span></a>
+      <a data-pane="messages"><span>받은 쪽지함</span></a>
+      <a data-pane="settings"><span>비밀번호 · 백업</span></a>
     </nav>
     <div class="footer">
       <a class="preview-link" href="index.html" target="_blank">사이트 보기 ↗</a>
@@ -255,6 +258,24 @@
       </div>
     </div>
 
+    <!-- ============ Pane: photo ============ -->
+    <div class="pane" data-pane="photo">
+      <div class="card">
+        <div class="card-head"><h3>메인 사진 (Portrait)</h3><span class="meta">액자 프레임</span></div>
+        <div class="field">
+          <label>사진 업로드 (최대 2MB 권장)</label>
+          <input type="file" id="photoUpload" accept="image/*" />
+          <div class="help">업로드된 사진은 로컬 스토리지에 저장되며 메인 화면의 액자에 표시됩니다.</div>
+        </div>
+        <div class="field" id="photoPreviewBox" style="display:none; margin-top:14px;">
+          <label>현재 설정된 사진</label>
+          <img id="photoPreview" style="max-width:200px; border-radius:4px; border:1px solid var(--line); display:block;" />
+          <button id="photoRemove" style="display:block; margin-top:8px; background:transparent; border:1px solid var(--line); color:var(--danger); padding:6px 12px; border-radius:4px; font-family:var(--sans); font-size:11px; cursor:pointer;">사진 삭제</button>
+        </div>
+      </div>
+    </div>
+
+
     <!-- ============ Pane: shelf ============ -->
     <div class="pane" data-pane="shelf">
       <div class="card">
@@ -274,7 +295,55 @@
 
     <!-- ============ Pane: panels ============ -->
     <div class="pane" data-pane="panels">
-      <div id="panelList"></div>
+      <div id="panelList">      </div>
+    </div>
+
+    <!-- ============ Pane: posts ============ -->
+    <div class="pane" data-pane="posts">
+      <div class="card">
+        <div class="card-head"><h3>인사이트 글쓰기</h3><span class="meta">archive.html 표시용</span></div>
+        <div class="field">
+          <label>글 제목</label>
+          <input id="postTitle" placeholder="제목을 입력하세요" />
+        </div>
+        <div class="field">
+          <label>작성일 / 게시일 (과거 날짜 입력 가능)</label>
+          <input type="date" id="postDate" />
+        </div>
+        <div class="field">
+          <label>본문 내용</label>
+          <textarea id="postBody" rows="6" placeholder="내용을 입력하세요 (줄바꿈 허용)"></textarea>
+        </div>
+        <div class="field">
+          <label>이미지 업로드 (선택, 최대 2MB)</label>
+          <input type="file" id="postImageUpload" accept="image/*" />
+          <img id="postImagePreview" style="max-width:200px; display:none; margin-top:10px; border-radius:4px; border:1px solid var(--line);" />
+        </div>
+        <div class="field">
+          <label>사진 캡션 (선택)</label>
+          <input id="postCaption" placeholder="사진 아래 들어갈 캡션" />
+        </div>
+        <button id="addPostBtn" style="background:var(--gold); color:#1a1a1a; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer; margin-top:10px;">새 글 저장하기</button>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>작성된 글 목록</h3><span class="meta">최신순</span></div>
+        <div id="postsList" style="display:flex; flex-direction:column; gap:12px;">
+          <!-- posts list injected here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Pane: messages ============ -->
+    <div class="pane" data-pane="messages">
+      <div class="card">
+        <div class="card-head"><h3>받은 쪽지함</h3><span class="meta">방문자가 남긴 쪽지</span></div>
+        <div id="messagesList" style="margin-top:20px; display:flex; flex-direction:column; gap:16px;">
+          <!-- messages injected here -->
+        </div>
+        <div style="margin-top:20px; text-align:right;">
+          <button onclick="if(confirm('모든 쪽지를 삭제하시겠습니까?')) { localStorage.removeItem('ui.archive.messages'); renderMessagesPane(); }" style="background:transparent; border:1px solid var(--line); color:var(--danger); padding:8px 16px; border-radius:4px; font-family:var(--sans); cursor:pointer;">전체 삭제</button>
+        </div>
+      </div>
     </div>
 
     <!-- ============ Pane: settings ============ -->
@@ -293,7 +362,9 @@
         <p style="font-size:13px;color:var(--sub);margin-bottom:14px;line-height:1.6">현재 모든 콘텐츠를 JSON으로 내보내거나, 이전 백업 파일을 불러와 복원합니다. <span style="color:var(--gold-soft)">(나중에 Supabase로 교체 가능)</span></p>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <button id="exportBtn" style="background:transparent;border:1px solid var(--line);color:var(--cream);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">JSON 내보내기</button>
-          <label style="background:transparent;border:1px solid var(--line);color:var(--cream);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">JSON 불러오기<input id="importFile" type="file" accept="application/json" style="display:none"></label>
+    <button id="importBtn" onclick="document.getElementById('importFile').click()" style="background:transparent;border:1px solid var(--line);color:var(--cream);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">JSON 불러오기</button>
+    <input id="importFile" type="file" accept="application/json" style="display:none">
+    <button onclick="if(confirm('모든 쪽지를 삭제하시겠습니까?')) { UI_ARCHIVE.saveItemAsync('ui.archive.messages', []).then(renderMessagesPane); }" style="background:transparent; border:1px solid var(--line); color:var(--danger); padding:8px 16px; border-radius:4px; font-family:var(--sans); cursor:pointer;">전체 삭제</button>
           <button id="resetBtn" style="background:transparent;border:1px solid var(--line);color:var(--danger);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">기본값으로 초기화</button>
         </div>
       </div>
@@ -309,18 +380,19 @@
   </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="data.js"></script>
 <script>
   /* =========================================================
      Admin app — bilingual editor for The Quiet Archive
-     Note: Storage is localStorage; swap to Supabase later by
-     replacing UI_ARCHIVE.load() / save() with async fetch().
+     Now synced to Supabase
      ========================================================= */
-  let state = UI_ARCHIVE.load();
+  let state = null;
   let lang = 'ko';
 
   /* ---------- login flow ---------- */
-  function showDash(){
+  async function showDash(){
+    state = await UI_ARCHIVE.loadAsync();
     document.getElementById('loginView').style.display='none';
     document.getElementById('dashView').style.display='grid';
     initDash();
@@ -360,7 +432,7 @@
       card.className='card';
       card.innerHTML = `
         <div class="card-head">
-          <h3>${(idx+1).toString().padStart(2,'0')} · ${obj.id}</h3>
+          <h3>${obj.id}</h3>
           <span class="meta">${obj.shelf} shelf · ${obj.type}</span>
         </div>
         <div class="obj-row">
@@ -440,7 +512,7 @@
       card.className='card';
       card.innerHTML = `
         <div class="card-head">
-          <h3>${(idx+1).toString().padStart(2,'0')} · ${obj.id} 패널</h3>
+          <h3>${obj.id} 패널</h3>
           <span class="meta">${lang === 'ko' ? '한국어' : 'English'}</span>
         </div>
         <div class="grid-2">
@@ -452,6 +524,10 @@
             <label>CTA 버튼 텍스트</label>
             <input data-panel="${obj.id}" data-key="cta" value="${(p.cta||'').replace(/"/g,'&quot;')}" />
           </div>
+        </div>
+        <div class="field">
+          <label>CTA 링크 주소 (선택)</label>
+          <input data-panel="${obj.id}" data-key="ctaUrl" value="${(p.ctaUrl||'').replace(/"/g,'&quot;')}" placeholder="https://..." />
         </div>
         <div class="field">
           <label>제목 H2 (HTML 허용 · &lt;em&gt; 태그로 강조)</label>
@@ -506,6 +582,97 @@
     });
   }
 
+  async function renderMessagesPane(){
+    const list = document.getElementById('messagesList');
+    if(!list) return;
+    const messages = await UI_ARCHIVE.loadItemAsync('ui.archive.messages', []);
+    if(messages.length === 0){
+      list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center; padding:20px;">받은 쪽지가 없습니다.</div>';
+      return;
+    }
+    list.innerHTML = messages.reverse().map(m => `
+      <div style="background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; padding:16px;">
+        <div style="font-size:11px; color:var(--sub); margin-bottom:8px;">${new Date(m.date).toLocaleString()}</div>
+        <div style="font-size:14px; line-height:1.5; color:var(--text); white-space:pre-wrap;">${m.text.replace(/</g,'&lt;')}</div>
+      </div>
+    `).join('');
+  }
+
+  /* ---------- posts management ---------- */
+  let currentPostImageData = null;
+  document.getElementById('postImageUpload')?.addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      currentPostImageData = ev.target.result;
+      const preview = document.getElementById('postImagePreview');
+      preview.src = currentPostImageData;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('addPostBtn')?.addEventListener('click', async ()=>{
+    const title = document.getElementById('postTitle').value.trim();
+    const body = document.getElementById('postBody').value.trim();
+    if(!title && !body) return alert("제목이나 내용을 입력해주세요.");
+    
+    let dateVal = document.getElementById('postDate').value;
+    if(!dateVal) dateVal = new Date().toISOString();
+    else dateVal = new Date(dateVal).toISOString();
+
+    const posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+    posts.push({
+      id: Date.now().toString(),
+      date: dateVal,
+      title,
+      body,
+      image: currentPostImageData,
+      caption: document.getElementById('postCaption').value.trim()
+    });
+    await UI_ARCHIVE.saveItemAsync('ui.archive.posts', posts);
+    
+    // clear form
+    document.getElementById('postTitle').value = '';
+    document.getElementById('postDate').value = '';
+    document.getElementById('postBody').value = '';
+    document.getElementById('postCaption').value = '';
+    document.getElementById('postImageUpload').value = '';
+    document.getElementById('postImagePreview').style.display = 'none';
+    currentPostImageData = null;
+    
+    renderPostsList();
+  });
+
+  async function renderPostsList() {
+    const list = document.getElementById('postsList');
+    if(!list) return;
+    const posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+    if(posts.length === 0) {
+      list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center;">작성된 글이 없습니다.</div>';
+      return;
+    }
+    const html = posts.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => `
+      <div style="background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div style="font-weight:bold; color:var(--cream);">${p.title || '(제목 없음)'}</div>
+          <div style="font-size:11px; color:var(--sub); margin-top:4px;">${new Date(p.date).toLocaleString()}</div>
+        </div>
+        <button onclick="deletePost('${p.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">삭제</button>
+      </div>
+    `).join('');
+    list.innerHTML = html;
+  }
+
+  window.deletePost = async function(id) {
+    if(!confirm("이 글을 삭제하시겠습니까?")) return;
+    let posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+    posts = posts.filter(p => p.id !== id);
+    await UI_ARCHIVE.saveItemAsync('ui.archive.posts', posts);
+    renderPostsList();
+  };
+
   /* ---------- bind direct path inputs ---------- */
   function bindPaths(){
     document.querySelectorAll('input[data-path], textarea[data-path]').forEach(inp=>{
@@ -525,9 +692,10 @@
     document.getElementById('status').classList.remove('saved');
     clearTimeout(saveTimer);
     saveTimer = setTimeout(()=>{
-      UI_ARCHIVE.save(state);
-      document.getElementById('status').textContent = '저장됨 · Saved ✓';
-      document.getElementById('status').classList.add('saved');
+      UI_ARCHIVE.saveAsync(state).then(()=>{
+        document.getElementById('status').textContent = '저장됨 · Saved ✓';
+        document.getElementById('status').classList.add('saved');
+      });
     }, 350);
   }
 
@@ -536,12 +704,15 @@
     document.querySelectorAll('.side nav a').forEach(a=>a.classList.toggle('on', a.dataset.pane===name));
     document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.dataset.pane===name));
     const titles = {
-      brand:['브랜드 · 네비게이션','01 · 브랜드 · 네비','상단바의 마크, 위치 표기, 네비게이션 항목.'],
-      founder:['Founder 카드','02 · Founder 카드','왼쪽의 개인 소개 영역. 이름, 역할, 서명을 편집합니다.'],
-      shelf:['책장 헤더','03 · 책장 헤더','책장 위 제목과 부제, 화면 하단 힌트 문구.'],
-      objects:['오브제 7개','04 · 오브제 설정','각 오브제의 라벨과 클릭 동작을 설정합니다.'],
-      panels:['패널 콘텐츠','05 · 패널 콘텐츠','오브제 클릭 시 열리는 모던 콘텐츠 패널의 글.'],
-      settings:['비밀번호 · 백업','06 · 설정','관리자 비밀번호와 데이터 백업.']
+      brand:['브랜드 · 네비게이션','브랜드 · 네비','상단바의 마크, 위치 표기, 네비게이션 항목.'],
+      founder:['Founder 카드','Founder 카드','왼쪽의 개인 소개 영역. 이름, 역할, 서명을 편집합니다.'],
+      photo:['메인 사진','메인 사진','메인 화면 좌측 액자에 표시할 사진을 업로드합니다.'],
+      shelf:['책장 헤더','책장 헤더','책장 위 제목과 부제, 화면 하단 힌트 문구.'],
+      objects:['오브제 설정','오브제 설정','각 오브제의 라벨과 클릭 동작을 설정합니다.'],
+      panels:['패널 콘텐츠','패널 콘텐츠','오브제 클릭 시 열리는 모던 콘텐츠 패널의 글.'],
+      posts:['인사이트 글 관리','인사이트 블로그','archive.html에 표시될 사진과 글을 작성합니다.'],
+      messages:['받은 쪽지함','받은 쪽지함','방문자가 남긴 쪽지를 확인합니다.'],
+      settings:['비밀번호 · 백업','설정','관리자 비밀번호와 데이터 백업.']
     };
     const [t,c,d] = titles[name];
     document.getElementById('paneTitle').textContent = t;
@@ -552,6 +723,8 @@
     if(name==='objects') renderObjectsPane();
     if(name==='panels') renderPanelsPane();
     if(name==='brand') renderNavList();
+    if(name==='messages') renderMessagesPane();
+    if(name==='posts') renderPostsList();
     bindPaths();
   }
 
@@ -584,6 +757,42 @@
       state.nav[lang].push('New');
       autoSave(); renderNavList();
     });
+
+    // photo upload
+    document.getElementById('photoUpload').addEventListener('change', e => {
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        state.founder = state.founder || {};
+        state.founder.photo = ev.target.result;
+        autoSave();
+        renderPhotoPreview();
+      };
+      reader.readAsDataURL(f);
+    });
+
+    document.getElementById('photoRemove').addEventListener('click', () => {
+      if(state.founder) {
+        state.founder.photo = null;
+        document.getElementById('photoUpload').value = '';
+        autoSave();
+        renderPhotoPreview();
+      }
+    });
+
+    function renderPhotoPreview() {
+      const box = document.getElementById('photoPreviewBox');
+      const img = document.getElementById('photoPreview');
+      if(state.founder && state.founder.photo) {
+        img.src = state.founder.photo;
+        box.style.display = 'block';
+      } else {
+        box.style.display = 'none';
+        img.src = '';
+      }
+    }
+    renderPhotoPreview();
 
     // password change
     document.getElementById('changePwBtn').addEventListener('click', ()=>{
