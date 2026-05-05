@@ -650,8 +650,134 @@
     `).join('');
   }
 
+  /* ---------- vibes (Vibe Coding) ---------- */
+  let currentVibeImageData = null;
+  let editingVibeId = null;
+  document.getElementById('vibeImageInput')?.addEventListener('change', e=>{
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      currentVibeImageData = ev.target.result;
+      document.getElementById('vibeImagePreview').innerHTML = `<img src="${currentVibeImageData}" style="width:100%; height:100%; object-fit:cover;">`;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  document.getElementById('addVibeBtn')?.addEventListener('click', async ()=>{
+    const title = document.getElementById('vibeTitle').value.trim();
+    const body = document.getElementById('vibeBody').value.trim();
+    if(!title && !body) return alert("제목이나 내용을 입력해주세요.");
+    
+    let dateVal = document.getElementById('vibeDate').value;
+    if(!dateVal) dateVal = new Date().toISOString();
+    else dateVal = new Date(dateVal).toISOString();
+
+    const vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    
+    if (editingVibeId) {
+      const idx = vibes.findIndex(v => v.id === editingVibeId);
+      if (idx !== -1) {
+        vibes[idx] = {
+          ...vibes[idx],
+          date: dateVal,
+          title,
+          body,
+          image: currentVibeImageData || vibes[idx].image
+        };
+      }
+      editingVibeId = null;
+      document.getElementById('addVibeBtn').textContent = '산출물 저장하기';
+      document.getElementById('addVibeBtn').style.background = 'var(--gold)';
+    } else {
+      vibes.push({
+        id: Date.now().toString(),
+        date: dateVal,
+        title,
+        body,
+        image: currentVibeImageData
+      });
+    }
+    await UI_ARCHIVE.saveItemAsync('ui.archive.vibes', vibes);
+    
+    // clear form
+    document.getElementById('vibeTitle').value = '';
+    document.getElementById('vibeDate').value = '';
+    document.getElementById('vibeBody').value = '';
+    document.getElementById('vibeImageInput').value = '';
+    document.getElementById('vibeImagePreview').innerHTML = '<span style="font-size:12px; color:var(--sub);">미리보기</span>';
+    currentVibeImageData = null;
+    
+    renderVibesList();
+  });
+
+  async function renderVibesList() {
+    const list = document.getElementById('vibesList');
+    if(!list) return;
+    const vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    if(vibes.length === 0) {
+      list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center;">작성된 글이 없습니다.</div>';
+      return;
+    }
+    vibes.sort((a,b) => new Date(b.date) - new Date(a.date));
+    let html = '';
+    vibes.forEach(v => {
+      const d = new Date(v.date);
+      const ds = isNaN(d) ? '' : d.toLocaleDateString();
+      html += `
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px; border:1px solid var(--line); border-radius:4px; background:rgba(0,0,0,0.1);">
+          <div style="flex:1; margin-right:10px;">
+            <div style="font-size:14px; font-weight:bold; margin-bottom:4px; color:var(--cream);">${v.title || '(제목 없음)'}</div>
+            <div style="font-size:11px; color:var(--sub);">${ds}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button onclick="editVibe('${v.id}')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:3px; cursor:pointer; font-size:11px;">수정</button>
+            <button onclick="deleteVibe('${v.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:3px; cursor:pointer; font-size:11px;">삭제</button>
+          </div>
+        </div>
+      `;
+    });
+    list.innerHTML = html;
+  }
+
+  window.deleteVibe = async function(id) {
+    if(!confirm("이 산출물을 삭제하시겠습니까?")) return;
+    let vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    vibes = vibes.filter(v => v.id !== id);
+    await UI_ARCHIVE.saveItemAsync('ui.archive.vibes', vibes);
+    renderVibesList();
+  };
+
+  window.editVibe = async function(id) {
+    const vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    const vibe = vibes.find(v => v.id === id);
+    if (!vibe) return;
+
+    editingVibeId = id;
+    document.getElementById('vibeTitle').value = vibe.title || '';
+    document.getElementById('vibeBody').value = vibe.body || '';
+    if (vibe.date) {
+      document.getElementById('vibeDate').value = new Date(vibe.date).toISOString().slice(0, 10);
+    }
+    
+    if (vibe.image) {
+      currentVibeImageData = vibe.image;
+      document.getElementById('vibeImagePreview').innerHTML = `<img src="${vibe.image}" style="width:100%; height:100%; object-fit:cover;">`;
+    } else {
+      document.getElementById('vibeImagePreview').innerHTML = '<span style="font-size:12px; color:var(--sub);">미리보기</span>';
+    }
+    
+    const btn = document.getElementById('addVibeBtn');
+    btn.textContent = '산출물 수정 완료 (Update Vibe)';
+    btn.style.background = '#4CAF50';
+    
+    // scroll to form
+    document.querySelector('#pane-vibes').scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   /* ---------- posts management ---------- */
   let currentPostImageData = null;
+  let editingPostId = null;
   document.getElementById('postImageUpload')?.addEventListener('change', e=>{
     const file = e.target.files[0];
     if(!file) return;
@@ -675,14 +801,32 @@
     else dateVal = new Date(dateVal).toISOString();
 
     const posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
-    posts.push({
-      id: Date.now().toString(),
-      date: dateVal,
-      title,
-      body,
-      image: currentPostImageData,
-      caption: document.getElementById('postCaption').value.trim()
-    });
+    
+    if (editingPostId) {
+      const idx = posts.findIndex(p => p.id === editingPostId);
+      if (idx !== -1) {
+        posts[idx] = {
+          ...posts[idx],
+          date: dateVal,
+          title,
+          body,
+          image: currentPostImageData || posts[idx].image,
+          caption: document.getElementById('postCaption').value.trim()
+        };
+      }
+      editingPostId = null;
+      document.getElementById('addPostBtn').textContent = '새 글 저장하기';
+      document.getElementById('addPostBtn').style.background = 'var(--gold)';
+    } else {
+      posts.push({
+        id: Date.now().toString(),
+        date: dateVal,
+        title,
+        body,
+        image: currentPostImageData,
+        caption: document.getElementById('postCaption').value.trim()
+      });
+    }
     await UI_ARCHIVE.saveItemAsync('ui.archive.posts', posts);
     
     // clear form
@@ -707,11 +851,14 @@
     }
     const html = posts.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => `
       <div style="background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
-        <div>
+        <div style="flex:1; margin-right:10px;">
           <div style="font-weight:bold; color:var(--cream);">${p.title || '(제목 없음)'}</div>
           <div style="font-size:11px; color:var(--sub); margin-top:4px;">${new Date(p.date).toLocaleString()}</div>
         </div>
-        <button onclick="deletePost('${p.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">삭제</button>
+        <div style="display:flex; gap:6px;">
+          <button onclick="editPost('${p.id}')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">수정</button>
+          <button onclick="deletePost('${p.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">삭제</button>
+        </div>
       </div>
     `).join('');
     list.innerHTML = html;
@@ -723,6 +870,35 @@
     posts = posts.filter(p => p.id !== id);
     await UI_ARCHIVE.saveItemAsync('ui.archive.posts', posts);
     renderPostsList();
+  };
+
+  window.editPost = async function(id) {
+    const posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+    const post = posts.find(p => p.id === id);
+    if (!post) return;
+
+    editingPostId = id;
+    document.getElementById('postTitle').value = post.title || '';
+    document.getElementById('postBody').value = post.body || '';
+    document.getElementById('postCaption').value = post.caption || '';
+    if (post.date) {
+      document.getElementById('postDate').value = new Date(post.date).toISOString().slice(0, 10);
+    }
+    
+    const preview = document.getElementById('postImagePreview');
+    if (post.image) {
+      preview.src = post.image;
+      preview.style.display = 'block';
+    } else {
+      preview.style.display = 'none';
+    }
+    
+    const btn = document.getElementById('addPostBtn');
+    btn.textContent = '글 수정 완료 (Update Post)';
+    btn.style.background = '#4CAF50';
+    
+    // scroll to form
+    document.querySelector('[data-pane="posts"]').scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   /* ---------- bind direct path inputs ---------- */
