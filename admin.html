@@ -1,0 +1,634 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin · The Quiet Archive</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#1F1A18; --panel:#2C2522; --line:rgba(201,168,108,.18);
+    --cream:#F4F0E9; --sub:#A89F94; --gold:#C9A86C; --gold-soft:#B8985F;
+    --ink:#1F1A18; --danger:#C97560;
+    --sans:'Inter','Noto Sans KR',sans-serif;
+    --serif:'Playfair Display',serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--cream);font-family:var(--sans);min-height:100vh;-webkit-font-smoothing:antialiased}
+
+  /* ===== Login ===== */
+  .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .login-card{
+    width:100%;max-width:420px;background:var(--panel);border:1px solid var(--line);
+    padding:48px 40px;border-radius:6px;box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .login-card .eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:12px}
+  .login-card h1{font-family:var(--serif);font-weight:700;font-size:34px;color:var(--cream);margin-bottom:6px;letter-spacing:-.01em}
+  .login-card .subtitle{font-size:13px;color:var(--sub);margin-bottom:32px;line-height:1.6}
+  .login-card label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--sub);margin-bottom:8px}
+  .login-card input{
+    width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line);
+    color:var(--cream);padding:12px 14px;font-family:var(--sans);font-size:15px;
+    border-radius:4px;outline:none;transition:border-color .25s;
+  }
+  .login-card input:focus{border-color:var(--gold)}
+  .login-card .err{color:var(--danger);font-size:12px;margin-top:10px;min-height:16px}
+  .login-card button{
+    margin-top:20px;width:100%;padding:14px;background:var(--gold);color:var(--ink);
+    border:none;border-radius:4px;font-family:var(--sans);font-weight:600;font-size:14px;
+    letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:background .25s;
+  }
+  .login-card button:hover{background:#D9B97A}
+  .login-card .hint-pw{margin-top:14px;font-size:11px;color:var(--sub);font-family:var(--mono);letter-spacing:.06em}
+
+  /* ===== Dashboard ===== */
+  .shell{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+  .side{
+    background:var(--panel);border-right:1px solid var(--line);padding:28px 22px;
+    display:flex;flex-direction:column;gap:6px;
+  }
+  .side .brand{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--cream);margin-bottom:4px}
+  .side .brand em{font-style:italic;color:var(--gold);font-weight:400}
+  .side .role{font-family:var(--mono);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:24px}
+  .side nav{display:flex;flex-direction:column;gap:2px;flex:1}
+  .side nav a{
+    display:flex;align-items:center;gap:12px;
+    color:var(--sub);text-decoration:none;font-size:13px;
+    padding:11px 14px;border-radius:4px;cursor:pointer;transition:all .2s;
+    border:1px solid transparent;
+  }
+  .side nav a:hover{color:var(--cream);background:rgba(201,168,108,.04)}
+  .side nav a.on{color:var(--cream);background:rgba(201,168,108,.08);border-color:var(--line)}
+  .side nav a .num{font-family:var(--mono);font-size:9px;letter-spacing:.2em;color:var(--gold);width:18px}
+  .side .footer{margin-top:18px;display:flex;flex-direction:column;gap:8px}
+  .side .footer button{
+    background:transparent;border:1px solid var(--line);color:var(--sub);
+    padding:9px 12px;border-radius:4px;font-family:var(--sans);font-size:11px;
+    letter-spacing:.2em;text-transform:uppercase;cursor:pointer;transition:all .2s;
+  }
+  .side .footer button:hover{color:var(--cream);border-color:var(--gold)}
+  .side .footer button.danger:hover{color:var(--danger);border-color:var(--danger)}
+
+  .main{padding:36px 44px 80px 44px;overflow-y:auto;max-height:100vh}
+  .main h2{font-family:var(--serif);font-size:30px;font-weight:700;letter-spacing:-.01em;margin-bottom:6px}
+  .main .crumb{font-family:var(--mono);font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+  .main .desc{color:var(--sub);font-size:13px;margin-bottom:28px;max-width:60ch;line-height:1.6}
+
+  /* lang tabs */
+  .lang-tabs{display:flex;gap:4px;margin-bottom:24px;background:var(--panel);padding:4px;border-radius:6px;border:1px solid var(--line);width:fit-content}
+  .lang-tabs button{
+    background:transparent;border:none;color:var(--sub);cursor:pointer;
+    padding:8px 18px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+    border-radius:4px;transition:all .2s;
+  }
+  .lang-tabs button.on{background:var(--gold);color:var(--ink);font-weight:600}
+
+  .field{margin-bottom:18px}
+  .field label{
+    display:block;font-family:var(--mono);font-size:10px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--sub);margin-bottom:7px;
+  }
+  .field input, .field textarea, .field select{
+    width:100%;background:var(--panel);border:1px solid var(--line);
+    color:var(--cream);padding:11px 13px;font-family:var(--sans);font-size:14px;
+    border-radius:4px;outline:none;transition:border-color .2s;
+  }
+  .field textarea{resize:vertical;min-height:80px;line-height:1.6}
+  .field input:focus, .field textarea:focus, .field select:focus{border-color:var(--gold)}
+  .field .help{font-size:11px;color:var(--sub);margin-top:5px;font-family:var(--mono);letter-spacing:.04em}
+
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:900px){.grid-2{grid-template-columns:1fr} .shell{grid-template-columns:1fr}.side{position:sticky;top:0;z-index:5} .side nav{flex-direction:row;flex-wrap:wrap}}
+
+  .card{
+    background:var(--panel);border:1px solid var(--line);border-radius:6px;
+    padding:22px;margin-bottom:18px;
+  }
+  .card .card-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
+  .card .card-head h3{font-family:var(--serif);font-size:22px;font-weight:700}
+  .card .card-head .meta{font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold);text-transform:uppercase}
+  .obj-row{display:grid;grid-template-columns:140px 1fr;gap:14px;align-items:start}
+  @media(max-width:700px){.obj-row{grid-template-columns:1fr}}
+  .obj-row .meta-col{display:flex;flex-direction:column;gap:8px}
+  .obj-row .ico{
+    height:64px;border:1px dashed var(--line);border-radius:4px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;
+  }
+
+  /* sticky save bar */
+  .save-bar{
+    position:sticky;bottom:0;left:0;right:0;
+    margin:24px -44px -80px -44px;padding:18px 44px;
+    background:linear-gradient(180deg, rgba(31,26,24,0) 0%, var(--bg) 30%);
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
+    z-index:10;
+  }
+  .save-bar .status{font-size:12px;color:var(--sub);font-family:var(--mono);letter-spacing:.06em}
+  .save-bar .status.saved{color:#7DA17A}
+  .save-bar .actions{display:flex;gap:10px}
+  .save-bar button{
+    padding:12px 22px;border-radius:4px;border:1px solid var(--line);background:transparent;
+    color:var(--cream);font-family:var(--sans);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    cursor:pointer;font-weight:500;transition:all .2s;
+  }
+  .save-bar button.primary{background:var(--gold);border-color:var(--gold);color:var(--ink);font-weight:600}
+  .save-bar button.primary:hover{background:#D9B97A;border-color:#D9B97A}
+  .save-bar button:hover{border-color:var(--gold)}
+
+  .pane{display:none}
+  .pane.on{display:block}
+
+  /* radios for action */
+  .radio-group{display:flex;gap:10px;flex-wrap:wrap}
+  .radio-group label{
+    flex:1;min-width:140px;cursor:pointer;
+    border:1px solid var(--line);padding:10px 12px;border-radius:4px;
+    display:flex;align-items:center;gap:10px;transition:all .2s;
+    color:var(--cream);font-family:var(--sans);font-size:13px;
+    text-transform:none;letter-spacing:0;margin-bottom:0;
+  }
+  .radio-group label:hover{border-color:var(--gold-soft)}
+  .radio-group input{accent-color:var(--gold);width:auto}
+  .radio-group label.on{border-color:var(--gold);background:rgba(201,168,108,.06)}
+
+  /* preview link */
+  .preview-link{
+    display:inline-flex;align-items:center;gap:8px;color:var(--gold);text-decoration:none;
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    border-bottom:1px solid var(--gold);padding-bottom:2px;
+  }
+
+  .nav-array .item{
+    display:grid;grid-template-columns:24px 1fr auto;gap:10px;align-items:center;margin-bottom:8px;
+  }
+  .nav-array .item .n{font-family:var(--mono);font-size:11px;color:var(--gold)}
+  .nav-array .item button{background:transparent;border:1px solid var(--line);color:var(--sub);
+    padding:6px 10px;border-radius:3px;font-family:var(--mono);font-size:10px;cursor:pointer}
+  .nav-array .item button:hover{color:var(--danger);border-color:var(--danger)}
+
+</style>
+</head>
+<body>
+
+<!-- ============== LOGIN ============== -->
+<div id="loginView" class="login">
+  <div class="login-card">
+    <div class="eyebrow">Universal Insight</div>
+    <h1>관리자 로그인</h1>
+    <p class="subtitle">The Quiet Archive 관리자 페이지입니다. 비밀번호를 입력해주세요.</p>
+    <label for="pw">비밀번호 / Password</label>
+    <input id="pw" type="password" autocomplete="current-password" />
+    <div class="err" id="err"></div>
+    <button id="loginBtn">로그인 / Sign in</button>
+    <p class="hint-pw">초기 비밀번호: jay2026 (대시보드에서 변경 가능)</p>
+  </div>
+</div>
+
+<!-- ============== DASHBOARD ============== -->
+<div id="dashView" class="shell" style="display:none">
+  <aside class="side">
+    <div class="brand">Quiet <em>Archive</em></div>
+    <div class="role">Admin Dashboard</div>
+    <nav id="sideNav">
+      <a data-pane="brand" class="on"><span class="num">01</span><span>브랜드 · 네비</span></a>
+      <a data-pane="founder"><span class="num">02</span><span>Founder 카드</span></a>
+      <a data-pane="shelf"><span class="num">03</span><span>책장 헤더</span></a>
+      <a data-pane="objects"><span class="num">04</span><span>오브제 7개</span></a>
+      <a data-pane="panels"><span class="num">05</span><span>패널 콘텐츠</span></a>
+      <a data-pane="settings"><span class="num">06</span><span>비밀번호 · 백업</span></a>
+    </nav>
+    <div class="footer">
+      <a class="preview-link" href="index.html" target="_blank">사이트 보기 ↗</a>
+      <button id="logout">로그아웃 / Logout</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="crumb" id="crumb">01 · 브랜드 · 네비</div>
+    <h2 id="paneTitle">브랜드 · 네비게이션</h2>
+    <p class="desc" id="paneDesc">상단바의 마크, 위치 표기, 네비게이션 항목을 편집합니다. 한국어 / English 탭으로 분리하여 관리하세요.</p>
+
+    <div class="lang-tabs" id="langTabs">
+      <button data-lang="ko" class="on">한국어</button>
+      <button data-lang="en">English</button>
+    </div>
+
+    <!-- ============ Pane: brand ============ -->
+    <div class="pane on" data-pane="brand">
+      <div class="card">
+        <div class="card-head"><h3>상단바 (Topbar)</h3><span class="meta">brand · nav</span></div>
+        <div class="grid-2">
+          <div class="field">
+            <label>마크 텍스트</label>
+            <input data-path="brand.{lang}.mark" />
+          </div>
+          <div class="field">
+            <label>위치 / 연도</label>
+            <input data-path="brand.{lang}.est" />
+          </div>
+        </div>
+        <div class="field nav-array">
+          <label>네비게이션 항목</label>
+          <div id="navList"></div>
+          <button id="addNav" style="margin-top:8px;background:transparent;border:1px solid var(--line);color:var(--gold);padding:8px 14px;border-radius:4px;font-family:var(--mono);font-size:10px;letter-spacing:.2em;cursor:pointer">+ 항목 추가</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Pane: founder ============ -->
+    <div class="pane" data-pane="founder">
+      <div class="card">
+        <div class="card-head"><h3>Founder 카드</h3><span class="meta">왼쪽 개인 소개 영역</span></div>
+        <div class="grid-2">
+          <div class="field"><label>섹션 라벨</label><input data-path="founder.{lang}.eyebrow" /></div>
+          <div class="field"><label>한자/한글 표기</label><input data-path="founder.{lang}.han" /></div>
+          <div class="field"><label>이름 (앞)</label><input data-path="founder.{lang}.nameFirst" /></div>
+          <div class="field"><label>이름 (뒤 · 강조)</label><input data-path="founder.{lang}.nameLast" /></div>
+        </div>
+        <div class="field"><label>역할 소개 (한 문장)</label><textarea data-path="founder.{lang}.role" rows="3"></textarea></div>
+        <div class="field"><label>강조할 단어 (위 문장 안에서 골드로)</label><input data-path="founder.{lang}.roleAccent" /></div>
+        <div class="grid-2">
+          <div class="field"><label>서명</label><input data-path="founder.{lang}.signature" /></div>
+          <div class="field"><label>크레덴셜 (작은 텍스트)</label><input data-path="founder.{lang}.credentials" /></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ Pane: shelf ============ -->
+    <div class="pane" data-pane="shelf">
+      <div class="card">
+        <div class="card-head"><h3>책장 헤더</h3><span class="meta">제목 · 부제 · 힌트</span></div>
+        <div class="grid-2">
+          <div class="field"><label>책장 제목 (HTML 허용 · em 태그로 강조)</label><input data-path="shelfHeader.{lang}.title" /></div>
+          <div class="field"><label>부제</label><input data-path="shelfHeader.{lang}.subtitle" /></div>
+        </div>
+        <div class="field"><label>화면 하단 힌트</label><input data-path="hint.{lang}" /></div>
+      </div>
+    </div>
+
+    <!-- ============ Pane: objects ============ -->
+    <div class="pane" data-pane="objects">
+      <div id="objectList"></div>
+    </div>
+
+    <!-- ============ Pane: panels ============ -->
+    <div class="pane" data-pane="panels">
+      <div id="panelList"></div>
+    </div>
+
+    <!-- ============ Pane: settings ============ -->
+    <div class="pane" data-pane="settings">
+      <div class="card">
+        <div class="card-head"><h3>비밀번호</h3><span class="meta">관리자 접속</span></div>
+        <div class="grid-2">
+          <div class="field"><label>새 비밀번호</label><input id="newPw" type="password" /></div>
+          <div class="field"><label>다시 입력</label><input id="newPw2" type="password" /></div>
+        </div>
+        <button id="changePwBtn" style="background:var(--gold);color:var(--ink);border:none;padding:11px 22px;border-radius:4px;font-family:var(--sans);font-weight:600;font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">비밀번호 변경</button>
+        <div id="pwMsg" style="margin-top:10px;font-size:12px;color:var(--gold);font-family:var(--mono);min-height:16px"></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>데이터 백업</h3><span class="meta">JSON export · import</span></div>
+        <p style="font-size:13px;color:var(--sub);margin-bottom:14px;line-height:1.6">현재 모든 콘텐츠를 JSON으로 내보내거나, 이전 백업 파일을 불러와 복원합니다. <span style="color:var(--gold-soft)">(나중에 Supabase로 교체 가능)</span></p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button id="exportBtn" style="background:transparent;border:1px solid var(--line);color:var(--cream);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">JSON 내보내기</button>
+          <label style="background:transparent;border:1px solid var(--line);color:var(--cream);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">JSON 불러오기<input id="importFile" type="file" accept="application/json" style="display:none"></label>
+          <button id="resetBtn" style="background:transparent;border:1px solid var(--line);color:var(--danger);padding:11px 18px;border-radius:4px;font-family:var(--sans);font-size:12px;letter-spacing:.18em;text-transform:uppercase;cursor:pointer">기본값으로 초기화</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="save-bar">
+      <div class="status" id="status">변경사항이 자동 저장됩니다 · Auto-saved to localStorage</div>
+      <div class="actions">
+        <button id="previewBtn" onclick="window.open('index.html','_blank')">미리보기</button>
+        <button id="saveBtn" class="primary">저장 / Save</button>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script src="data.js"></script>
+<script>
+  /* =========================================================
+     Admin app — bilingual editor for The Quiet Archive
+     Note: Storage is localStorage; swap to Supabase later by
+     replacing UI_ARCHIVE.load() / save() with async fetch().
+     ========================================================= */
+  let state = UI_ARCHIVE.load();
+  let lang = 'ko';
+
+  /* ---------- login flow ---------- */
+  function showDash(){
+    document.getElementById('loginView').style.display='none';
+    document.getElementById('dashView').style.display='grid';
+    initDash();
+  }
+  if(UI_ARCHIVE.isLoggedIn()) showDash();
+
+  document.getElementById('loginBtn').addEventListener('click', tryLogin);
+  document.getElementById('pw').addEventListener('keydown', e=>{ if(e.key==='Enter') tryLogin(); });
+  function tryLogin(){
+    const pw = document.getElementById('pw').value;
+    if(UI_ARCHIVE.login(pw)){ document.getElementById('err').textContent=''; showDash(); }
+    else document.getElementById('err').textContent = '비밀번호가 올바르지 않습니다.';
+  }
+
+  /* ---------- helpers: get/set by dotted path with {lang} placeholder ---------- */
+  function resolvePath(p){ return p.replace('{lang}', lang); }
+  function getPath(obj, p){
+    return p.split('.').reduce((a,k)=> a==null?undefined:a[k], obj);
+  }
+  function setPath(obj, p, v){
+    const parts = p.split('.');
+    let cur = obj;
+    for(let i=0;i<parts.length-1;i++){
+      const k = parts[i];
+      if(cur[k]==null || typeof cur[k] !== 'object') cur[k] = {};
+      cur = cur[k];
+    }
+    cur[parts[parts.length-1]] = v;
+  }
+
+  /* ---------- rendering panes ---------- */
+  function renderObjectsPane(){
+    const list = document.getElementById('objectList');
+    list.innerHTML = '';
+    (state.objects||[]).forEach((obj,idx)=>{
+      const card = document.createElement('div');
+      card.className='card';
+      card.innerHTML = `
+        <div class="card-head">
+          <h3>${(idx+1).toString().padStart(2,'0')} · ${obj.id}</h3>
+          <span class="meta">${obj.shelf} shelf · ${obj.type}</span>
+        </div>
+        <div class="obj-row">
+          <div class="meta-col">
+            <div class="ico">${obj.type}</div>
+            <div class="field" style="margin:0">
+              <label>오브제 ID</label>
+              <input value="${obj.id}" disabled />
+            </div>
+          </div>
+          <div>
+            <div class="grid-2">
+              <div class="field">
+                <label>라벨 (한국어)</label>
+                <input data-obj="${obj.id}" data-key="label.ko" value="${(obj.label?.ko||'').replace(/"/g,'&quot;')}" />
+              </div>
+              <div class="field">
+                <label>Label (English)</label>
+                <input data-obj="${obj.id}" data-key="label.en" value="${(obj.label?.en||'').replace(/"/g,'&quot;')}" />
+              </div>
+            </div>
+            <div class="field">
+              <label>클릭 동작</label>
+              <div class="radio-group">
+                <label class="${obj.action==='panel'?'on':''}"><input type="radio" name="action_${obj.id}" value="panel" ${obj.action==='panel'?'checked':''} data-obj="${obj.id}" data-key="action" /><span>패널 열기 (콘텐츠 펼치기)</span></label>
+                <label class="${obj.action==='link'?'on':''}"><input type="radio" name="action_${obj.id}" value="link" ${obj.action==='link'?'checked':''} data-obj="${obj.id}" data-key="action" /><span>외부 링크로 이동</span></label>
+              </div>
+            </div>
+            <div class="field" style="display:${obj.action==='link'?'block':'none'}" data-url-row="${obj.id}">
+              <label>외부 URL</label>
+              <input data-obj="${obj.id}" data-key="url" value="${(obj.url||'').replace(/"/g,'&quot;')}" placeholder="https://..." />
+              <div class="help">새 탭에서 열립니다.</div>
+            </div>
+          </div>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    // wire inputs
+    list.querySelectorAll('input[data-obj]').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const id = inp.dataset.obj, key = inp.dataset.key;
+        const obj = state.objects.find(o=>o.id===id); if(!obj) return;
+        if(key.startsWith('label.')){
+          const l = key.split('.')[1];
+          obj.label = obj.label || {};
+          obj.label[l] = inp.value;
+        } else if(key === 'action'){
+          if(!inp.checked) return;
+          obj.action = inp.value;
+          // sync radio group ui
+          inp.closest('.radio-group').querySelectorAll('label').forEach(lab=>lab.classList.remove('on'));
+          inp.closest('label').classList.add('on');
+          // toggle url row
+          const row = list.querySelector(`[data-url-row="${id}"]`);
+          if(row) row.style.display = obj.action === 'link' ? 'block' : 'none';
+        } else {
+          obj[key] = inp.value;
+        }
+        autoSave();
+      });
+      inp.addEventListener('change', e=>{
+        if(inp.dataset.key === 'action' && inp.checked){
+          inp.dispatchEvent(new Event('input'));
+        }
+      });
+    });
+  }
+
+  function renderPanelsPane(){
+    const list = document.getElementById('panelList');
+    list.innerHTML = '';
+    (state.objects||[]).forEach((obj,idx)=>{
+      const p = (state.panels?.[obj.id]?.[lang]) || {};
+      const card = document.createElement('div');
+      card.className='card';
+      card.innerHTML = `
+        <div class="card-head">
+          <h3>${(idx+1).toString().padStart(2,'0')} · ${obj.id} 패널</h3>
+          <span class="meta">${lang === 'ko' ? '한국어' : 'English'}</span>
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label>Eyebrow (작은 라벨)</label>
+            <input data-panel="${obj.id}" data-key="eyebrow" value="${(p.eyebrow||'').replace(/"/g,'&quot;')}" />
+          </div>
+          <div class="field">
+            <label>CTA 버튼 텍스트</label>
+            <input data-panel="${obj.id}" data-key="cta" value="${(p.cta||'').replace(/"/g,'&quot;')}" />
+          </div>
+        </div>
+        <div class="field">
+          <label>제목 H2 (HTML 허용 · &lt;em&gt; 태그로 강조)</label>
+          <input data-panel="${obj.id}" data-key="h2" value="${(p.h2||'').replace(/"/g,'&quot;')}" />
+        </div>
+        <div class="field">
+          <label>리드 인용문 / Lede</label>
+          <textarea data-panel="${obj.id}" data-key="lede" rows="2">${p.lede||''}</textarea>
+        </div>
+        <div class="field">
+          <label>본문 / Body (빈 줄로 문단 구분)</label>
+          <textarea data-panel="${obj.id}" data-key="body" rows="5">${p.body||''}</textarea>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    list.querySelectorAll('[data-panel]').forEach(inp=>{
+      inp.addEventListener('input', ()=>{
+        const id = inp.dataset.panel, key = inp.dataset.key;
+        state.panels = state.panels || {};
+        state.panels[id] = state.panels[id] || {};
+        state.panels[id][lang] = state.panels[id][lang] || {};
+        state.panels[id][lang][key] = inp.value;
+        autoSave();
+      });
+    });
+  }
+
+  function renderNavList(){
+    const list = document.getElementById('navList'); if(!list) return;
+    const items = state.nav?.[lang] || [];
+    list.innerHTML = items.map((it,i)=>`
+      <div class="item">
+        <span class="n">${(i+1).toString().padStart(2,'0')}</span>
+        <input data-nav-i="${i}" value="${it.replace(/"/g,'&quot;')}" />
+        <button data-nav-del="${i}">제거</button>
+      </div>`).join('');
+    list.querySelectorAll('input[data-nav-i]').forEach(inp=>{
+      inp.addEventListener('input', e=>{
+        const i = +inp.dataset.navI;
+        state.nav[lang][i] = inp.value;
+        autoSave();
+      });
+    });
+    list.querySelectorAll('button[data-nav-del]').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const i = +b.dataset.navDel;
+        state.nav[lang].splice(i,1);
+        autoSave(); renderNavList();
+      });
+    });
+  }
+
+  /* ---------- bind direct path inputs ---------- */
+  function bindPaths(){
+    document.querySelectorAll('input[data-path], textarea[data-path]').forEach(inp=>{
+      const path = resolvePath(inp.dataset.path);
+      inp.value = getPath(state, path) ?? '';
+      inp.oninput = ()=>{
+        setPath(state, resolvePath(inp.dataset.path), inp.value);
+        autoSave();
+      };
+    });
+  }
+
+  /* ---------- save ---------- */
+  let saveTimer=null;
+  function autoSave(){
+    document.getElementById('status').textContent = '저장 중…';
+    document.getElementById('status').classList.remove('saved');
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      UI_ARCHIVE.save(state);
+      document.getElementById('status').textContent = '저장됨 · Saved ✓';
+      document.getElementById('status').classList.add('saved');
+    }, 350);
+  }
+
+  /* ---------- pane / lang switching ---------- */
+  function setPane(name){
+    document.querySelectorAll('.side nav a').forEach(a=>a.classList.toggle('on', a.dataset.pane===name));
+    document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on', p.dataset.pane===name));
+    const titles = {
+      brand:['브랜드 · 네비게이션','01 · 브랜드 · 네비','상단바의 마크, 위치 표기, 네비게이션 항목.'],
+      founder:['Founder 카드','02 · Founder 카드','왼쪽의 개인 소개 영역. 이름, 역할, 서명을 편집합니다.'],
+      shelf:['책장 헤더','03 · 책장 헤더','책장 위 제목과 부제, 화면 하단 힌트 문구.'],
+      objects:['오브제 7개','04 · 오브제 설정','각 오브제의 라벨과 클릭 동작을 설정합니다.'],
+      panels:['패널 콘텐츠','05 · 패널 콘텐츠','오브제 클릭 시 열리는 모던 콘텐츠 패널의 글.'],
+      settings:['비밀번호 · 백업','06 · 설정','관리자 비밀번호와 데이터 백업.']
+    };
+    const [t,c,d] = titles[name];
+    document.getElementById('paneTitle').textContent = t;
+    document.getElementById('crumb').textContent = c;
+    document.getElementById('paneDesc').textContent = d;
+    // hide lang tabs on settings
+    document.getElementById('langTabs').style.display = name==='settings' ? 'none':'flex';
+    if(name==='objects') renderObjectsPane();
+    if(name==='panels') renderPanelsPane();
+    if(name==='brand') renderNavList();
+    bindPaths();
+  }
+
+  function setLang(l){
+    lang = l;
+    document.querySelectorAll('#langTabs button').forEach(b=>b.classList.toggle('on', b.dataset.lang===l));
+    bindPaths();
+    renderNavList();
+    renderPanelsPane();
+  }
+
+  function initDash(){
+    document.querySelectorAll('.side nav a').forEach(a=>{
+      a.addEventListener('click', ()=> setPane(a.dataset.pane));
+    });
+    document.querySelectorAll('#langTabs button').forEach(b=>{
+      b.addEventListener('click', ()=> setLang(b.dataset.lang));
+    });
+    document.getElementById('logout').addEventListener('click', ()=>{
+      UI_ARCHIVE.logout(); location.reload();
+    });
+    document.getElementById('saveBtn').addEventListener('click', ()=>{
+      UI_ARCHIVE.save(state);
+      document.getElementById('status').textContent = '저장됨 · Saved ✓';
+      document.getElementById('status').classList.add('saved');
+    });
+    document.getElementById('addNav').addEventListener('click', ()=>{
+      state.nav = state.nav || {ko:[], en:[]};
+      state.nav[lang] = state.nav[lang] || [];
+      state.nav[lang].push('New');
+      autoSave(); renderNavList();
+    });
+
+    // password change
+    document.getElementById('changePwBtn').addEventListener('click', ()=>{
+      const a = document.getElementById('newPw').value;
+      const b = document.getElementById('newPw2').value;
+      const msg = document.getElementById('pwMsg');
+      if(!a || a.length < 4){ msg.style.color='var(--danger)'; msg.textContent='4자 이상 입력해주세요.'; return; }
+      if(a !== b){ msg.style.color='var(--danger)'; msg.textContent='두 입력값이 일치하지 않습니다.'; return; }
+      UI_ARCHIVE.setPassword(a);
+      msg.style.color='var(--gold)'; msg.textContent='비밀번호가 변경되었습니다.';
+      document.getElementById('newPw').value=''; document.getElementById('newPw2').value='';
+    });
+
+    // export / import / reset
+    document.getElementById('exportBtn').addEventListener('click', ()=>{
+      const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'quiet-archive-backup-'+new Date().toISOString().slice(0,10)+'.json';
+      a.click();
+    });
+    document.getElementById('importFile').addEventListener('change', e=>{
+      const f = e.target.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = ev =>{
+        try{
+          const parsed = JSON.parse(ev.target.result);
+          state = parsed;
+          UI_ARCHIVE.save(state);
+          alert('불러오기 완료. 페이지를 새로고침합니다.');
+          location.reload();
+        }catch(err){ alert('JSON 파일이 올바르지 않습니다: '+err.message); }
+      };
+      r.readAsText(f);
+    });
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      if(!confirm('모든 콘텐츠를 기본값으로 되돌립니다. 계속하시겠습니까?')) return;
+      UI_ARCHIVE.reset();
+      location.reload();
+    });
+
+    setPane('brand');
+    setLang('ko');
+  }
+</script>
+
+</body>
+</html>

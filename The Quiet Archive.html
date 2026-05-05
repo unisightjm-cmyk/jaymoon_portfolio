@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=1440" />
+<title>The Quiet Archive — Universal Insight</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant:ital,wght@0,400;0,600;1,400;1,600&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --walnut:#2C2522;
+    --walnut-deep:#1F1A18;
+    --shelf:#3F3732;
+    --shelf-edge:#4A4039;
+    --shelf-shadow:#15110F;
+    --cream:#F4F0E9;
+    --cream-card:#FAF7F2;
+    --gold:#C9A86C;
+    --gold-soft:#B8985F;
+    --sub:#A89F94;
+    --ink:#2A2520;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--walnut);color:var(--cream);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100vh}
+  body{
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 40%, #332B27 0%, #2C2522 55%, #1F1A18 100%);
+  }
+
+  /* ==== Film grain + warm vignette overlay ==== */
+  .grain{
+    position:fixed;inset:0;pointer-events:none;z-index:200;
+    opacity:.32;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.88  0 0 0 0 0.78  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  }
+  .vignette{
+    position:fixed;inset:0;pointer-events:none;z-index:201;
+    background:radial-gradient(ellipse 90% 75% at 50% 50%, transparent 40%, rgba(20,15,12,.55) 100%);
+  }
+
+  /* ==== Top bar ==== */
+  .topbar{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:28px 56px;
+    font-family:'Inter',sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--sub);
+  }
+  .topbar .mark{display:flex;align-items:center;gap:14px;color:var(--cream)}
+  .topbar .mark .dot{width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 12px rgba(201,168,108,.6)}
+  .topbar nav{display:flex;gap:38px}
+  .topbar nav a{color:var(--sub);text-decoration:none;transition:color .3s}
+  .topbar nav a:hover{color:var(--cream)}
+
+  /* ==== Stage ==== */
+  .stage{
+    position:relative;width:100vw;height:100vh;
+    perspective:2200px;perspective-origin:50% 45%;
+    display:flex;align-items:center;justify-content:center;
+    gap:54px;padding:0 80px;
+  }
+
+  /* ==== Founder card (Jay Moon personal intro) ==== */
+  .founder{
+    position:relative;width:430px;flex-shrink:0;
+    display:flex;flex-direction:column;
+    margin-top:30px;
+  }
+  .founder .eyebrow{
+    font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+    color:var(--gold);margin-bottom:22px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .founder .eyebrow .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--gold),transparent)}
+
+  .portrait-frame{
+    position:relative;width:240px;height:300px;margin-bottom:28px;
+    background:linear-gradient(140deg,#5A4D43 0%,#3F3732 60%,#2A231F 100%);
+    padding:14px;
+    box-shadow:
+      0 22px 44px rgba(0,0,0,.55),
+      inset 0 0 0 1px rgba(201,168,108,.18),
+      inset 0 0 0 6px #2A231F,
+      inset 0 0 0 7px rgba(201,168,108,.35);
+  }
+  .portrait-frame::after{
+    content:"";position:absolute;inset:-4px;border:1px solid rgba(201,168,108,.15);pointer-events:none;
+  }
+  .portrait{
+    position:relative;width:100%;height:100%;
+    background:
+      radial-gradient(ellipse at 50% 35%, #5C4A3C 0%, #3A2F26 60%, #1F1815 100%);
+    overflow:hidden;
+    display:flex;align-items:flex-end;justify-content:center;
+  }
+  .portrait::before{
+    /* photo grain */
+    content:"";position:absolute;inset:0;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence baseFrequency='1.2' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.95  0 0 0 0 0.85  0 0 0 0 0.7  0 0 0 0.4 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity:.35;mix-blend-mode:overlay;
+  }
+  .portrait .silhouette{
+    /* abstract shoulders + head silhouette as placeholder */
+    position:relative;width:88%;height:80%;
+    background:
+      radial-gradient(ellipse 28% 22% at 50% 22%, #2A1F18 0%, #2A1F18 60%, transparent 62%),
+      radial-gradient(ellipse 60% 50% at 50% 95%, #2A1F18 0%, #2A1F18 70%, transparent 72%);
+    filter:blur(.4px);
+  }
+  .portrait .stamp{
+    position:absolute;left:10px;bottom:10px;
+    font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.18em;
+    color:rgba(201,168,108,.55);text-transform:uppercase;
+  }
+  .portrait .placeholder-tag{
+    position:absolute;right:10px;top:10px;
+    font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.2em;
+    color:rgba(201,168,108,.4);text-transform:uppercase;
+    border:1px dashed rgba(201,168,108,.3);padding:3px 6px;
+  }
+
+  .founder .name{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:54px;line-height:1;letter-spacing:-.015em;color:var(--cream);
+    margin-bottom:6px;
+  }
+  .founder .name em{font-style:italic;font-weight:400;color:var(--gold)}
+  .founder .han{
+    font-family:'Cormorant',serif;font-style:italic;font-weight:400;
+    font-size:20px;color:var(--sub);margin-bottom:18px;letter-spacing:.04em;
+  }
+  .founder .role{
+    font-family:'Inter',sans-serif;font-size:13px;line-height:1.6;color:var(--cream);
+    max-width:36ch;margin-bottom:22px;font-weight:400;
+  }
+  .founder .role .accent{color:var(--gold)}
+  .founder .signature{
+    font-family:'Cormorant',serif;font-style:italic;font-weight:400;
+    font-size:38px;color:var(--gold);letter-spacing:.02em;
+    transform:rotate(-3deg);transform-origin:left center;
+    margin-bottom:6px;
+  }
+  .founder .signature-line{
+    width:140px;height:1px;background:rgba(201,168,108,.4);margin-bottom:8px;
+  }
+  .founder .credentials{
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.22em;
+    color:var(--sub);text-transform:uppercase;
+  }
+  .founder .credentials span{color:var(--gold)}
+
+  /* ==== Bookshelf ==== */
+  .shelf-wrap{
+    position:relative;flex:1;display:flex;flex-direction:column;align-items:center;
+  }
+  .shelf-eyebrow{
+    font-family:'Cormorant',serif;font-style:italic;font-weight:400;
+    font-size:18px;color:var(--gold);letter-spacing:.06em;margin-bottom:14px;
+    text-align:center;
+  }
+  .shelf-eyebrow .small{
+    display:block;font-family:'JetBrains Mono',monospace;font-style:normal;
+    font-size:9px;letter-spacing:.32em;color:var(--sub);text-transform:uppercase;
+    margin-top:6px;
+  }
+  .bookshelf{
+    position:relative;
+    width:760px;height:560px;
+    transform-style:preserve-3d;
+    transition:filter .6s ease, transform .6s ease;
+  }
+  .bookshelf.dim{filter:brightness(.78) saturate(.9)}
+
+  /* Frame (sides + top + bottom) */
+  .frame-side{
+    position:absolute;top:-18px;bottom:-18px;width:22px;
+    background:linear-gradient(180deg,#4A3F38 0%,#3F3732 50%,#332B27 100%);
+    box-shadow:inset 0 0 1px rgba(255,255,255,.04), 0 12px 30px rgba(0,0,0,.5);
+    border-radius:3px;
+  }
+  .frame-side.left{left:-22px}
+  .frame-side.right{right:-22px}
+  .frame-side::before{
+    content:"";position:absolute;inset:0;
+    background:repeating-linear-gradient(180deg,transparent 0 14px,rgba(0,0,0,.18) 14px 15px,transparent 15px 50px);
+    opacity:.55;
+  }
+  .frame-top{
+    position:absolute;left:-22px;right:-22px;top:-30px;height:18px;
+    background:linear-gradient(180deg,#5A4D43 0%,#3F3732 100%);
+    border-radius:2px 2px 0 0;
+    box-shadow:0 8px 18px rgba(0,0,0,.55);
+  }
+
+  /* Shelves */
+  .shelf{
+    position:absolute;left:0;right:0;height:270px;
+  }
+  .shelf.top{top:0}
+  .shelf.bottom{top:280px}
+
+  /* Shelf board (the wooden plank) */
+  .shelf-board{
+    position:absolute;left:-18px;right:-18px;bottom:0;height:22px;
+    background:
+      linear-gradient(180deg,#5A4D43 0%, #4A3F38 30%, #3F3732 60%, #2A231F 100%);
+    border-radius:2px;
+    box-shadow:
+      0 16px 26px -8px rgba(0,0,0,.7),
+      inset 0 1px 0 rgba(255,255,255,.05);
+  }
+  .shelf-board::after{
+    content:"";position:absolute;left:6%;right:6%;top:1px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(201,168,108,.18),transparent);
+  }
+  /* Wood grain */
+  .shelf-board::before{
+    content:"";position:absolute;inset:0;border-radius:2px;
+    background-image:
+      repeating-linear-gradient(90deg,
+        transparent 0 60px,
+        rgba(0,0,0,.08) 60px 61px,
+        transparent 61px 140px,
+        rgba(255,255,255,.03) 140px 141px);
+    opacity:.7;
+  }
+
+  /* Inner shadow on shelf back wall */
+  .shelf-back{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.55) 0%, rgba(0,0,0,.15) 22%, rgba(0,0,0,0) 50%, rgba(0,0,0,.35) 100%);
+    pointer-events:none;
+  }
+
+  /* ==== Object slots ==== */
+  .slots{
+    position:absolute;left:32px;right:32px;bottom:22px;top:0;
+    display:flex;align-items:flex-end;justify-content:space-between;
+    padding-bottom:6px;
+  }
+
+  .obj{
+    position:relative;
+    cursor:pointer;
+    transform-style:preserve-3d;
+    transition:transform .42s cubic-bezier(.2,.7,.2,1), opacity .5s ease, filter .5s ease;
+    transform-origin:50% 100%;
+    will-change:transform;
+  }
+  .obj:focus{outline:none}
+  .obj .label{
+    position:absolute;left:50%;bottom:-26px;transform:translateX(-50%);
+    font-family:'Inter',sans-serif;font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--sub);opacity:0;transition:opacity .42s ease, transform .42s ease;
+    white-space:nowrap;pointer-events:none;
+  }
+  .obj:hover .label{opacity:1;transform:translateX(-50%) translateY(-4px)}
+
+  .obj:hover{
+    transform:translateZ(38px) rotateX(7deg) rotateY(-4deg);
+    filter:drop-shadow(0 22px 30px rgba(0,0,0,.6)) drop-shadow(0 0 24px rgba(201,168,108,.18));
+  }
+  .bookshelf.dim .obj:not(.active){opacity:.35;filter:saturate(.6) brightness(.7)}
+  .bookshelf.dim .obj.active{
+    transform:translateZ(80px) translateX(20px) scale(1.05);
+    filter:drop-shadow(0 30px 40px rgba(0,0,0,.7)) drop-shadow(0 0 32px rgba(201,168,108,.28));
+    z-index:5;
+  }
+
+  /* === Object: Leather Notebook (Insights) === */
+  .o-notebook{width:150px;height:180px}
+  .o-notebook .body{
+    position:absolute;inset:0;
+    background:
+      linear-gradient(135deg,#5C3A28 0%, #4A2D1E 50%, #3A2317 100%);
+    border-radius:4px 8px 8px 4px;
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.4),
+      inset 6px 0 0 0 rgba(0,0,0,.25),
+      inset -2px 0 0 0 rgba(255,255,255,.04),
+      0 8px 18px rgba(0,0,0,.55);
+  }
+  .o-notebook .body::before{
+    /* leather texture */
+    content:"";position:absolute;inset:0;border-radius:4px 8px 8px 4px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.2  0 0 0 0 0.12  0 0 0 0 0.06  0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity:.55;mix-blend-mode:multiply;
+  }
+  .o-notebook .strap{
+    position:absolute;top:14px;bottom:14px;right:14px;width:8px;
+    background:linear-gradient(180deg,#3a2317,#1c0e08);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.5), 0 2px 4px rgba(0,0,0,.4);
+    border-radius:1px;
+  }
+  .o-notebook .emboss{
+    position:absolute;left:18px;right:30px;top:24px;
+    font-family:'Cormorant',serif;font-style:italic;font-size:14px;
+    color:rgba(201,168,108,.55);letter-spacing:.04em;
+    text-shadow:0 1px 0 rgba(0,0,0,.6), 0 -1px 0 rgba(255,255,255,.04);
+  }
+  .o-notebook .pages{
+    position:absolute;left:-3px;top:8px;bottom:8px;width:6px;
+    background:repeating-linear-gradient(180deg,#E8DDC4 0 2px,#C9B98E 2px 3px);
+    border-radius:2px 0 0 2px;
+    box-shadow:inset 0 0 2px rgba(0,0,0,.3);
+  }
+
+  /* === Object: Hardcover Book (Reflections) === */
+  .o-book{width:90px;height:150px}
+  .o-book .spine{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,#7A5230 0%, #5B3B22 60%, #3F2818 100%);
+    border-radius:2px;
+    box-shadow:
+      inset 1px 0 0 rgba(255,255,255,.08),
+      inset -2px 0 0 rgba(0,0,0,.4),
+      0 6px 14px rgba(0,0,0,.45);
+  }
+  .o-book .spine::before{
+    content:"";position:absolute;left:6px;right:6px;top:14px;height:1px;
+    background:rgba(201,168,108,.5);
+    box-shadow:0 86px 0 rgba(201,168,108,.5);
+  }
+  .o-book .title-v{
+    position:absolute;left:0;right:0;top:50%;transform:translateY(-50%) rotate(-90deg);
+    text-align:center;
+    font-family:'Cormorant',serif;font-weight:600;font-style:italic;
+    font-size:15px;color:var(--gold);letter-spacing:.12em;white-space:nowrap;
+    text-shadow:0 1px 0 rgba(0,0,0,.5);
+  }
+
+  /* === Object: Magnifier (About) === */
+  .o-mag{width:140px;height:160px}
+  .o-mag .glass{
+    position:absolute;left:8px;top:0;width:96px;height:96px;border-radius:50%;
+    background:
+      radial-gradient(circle at 35% 30%, rgba(255,245,220,.55) 0%, rgba(220,200,160,.18) 35%, rgba(40,30,22,.15) 70%);
+    border:5px solid #B8985F;
+    box-shadow:
+      inset 0 0 0 2px rgba(0,0,0,.4),
+      inset 0 0 24px rgba(201,168,108,.25),
+      0 8px 20px rgba(0,0,0,.55);
+    backdrop-filter:blur(.5px);
+  }
+  .o-mag .glass::after{
+    /* highlight */
+    content:"";position:absolute;left:14px;top:14px;width:30px;height:18px;border-radius:50%;
+    background:linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,0));
+    transform:rotate(-20deg);
+  }
+  .o-mag .handle{
+    position:absolute;left:80px;top:80px;width:18px;height:90px;
+    background:linear-gradient(90deg,#5C3A28,#3a2317 50%,#1f1108);
+    border-radius:4px;
+    transform-origin:top left;transform:rotate(28deg);
+    box-shadow:0 6px 12px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.4);
+  }
+  .o-mag .ferrule{
+    position:absolute;left:78px;top:78px;width:22px;height:14px;
+    background:linear-gradient(180deg,#D4B377,#8C6E40);
+    border-radius:2px;transform-origin:top left;transform:rotate(28deg);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.3);
+  }
+
+  /* === Object: Headphones (Sound) === */
+  .o-phones{width:170px;height:170px}
+  .o-phones .band{
+    position:absolute;left:18px;right:18px;top:18px;height:78px;
+    border:8px solid #2A2017;
+    border-bottom:none;
+    border-radius:80px 80px 0 0;
+    box-shadow:inset 0 4px 0 rgba(255,255,255,.06), 0 6px 14px rgba(0,0,0,.5);
+  }
+  .o-phones .band::after{
+    content:"";position:absolute;left:30px;right:30px;top:8px;height:6px;
+    background:linear-gradient(180deg,#8C6E40,#5C4426);
+    border-radius:4px;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.3);
+  }
+  .o-phones .cup{
+    position:absolute;top:78px;width:62px;height:74px;border-radius:30px / 36px;
+    background:radial-gradient(ellipse at 35% 35%, #4A3A2B 0%, #2A1F16 70%, #18110B 100%);
+    box-shadow:
+      inset 0 0 0 3px #B8985F,
+      inset 0 0 0 6px #2A1F16,
+      0 8px 16px rgba(0,0,0,.55);
+  }
+  .o-phones .cup.l{left:6px}
+  .o-phones .cup.r{right:6px}
+  .o-phones .cup::after{
+    content:"";position:absolute;left:50%;top:50%;width:24px;height:24px;border-radius:50%;
+    transform:translate(-50%,-50%);
+    background:radial-gradient(circle, #1a120c 0%, #2A1F16 100%);
+    box-shadow:inset 0 0 0 1px rgba(201,168,108,.25);
+  }
+
+  /* === Object: Silver Retro Laptop (Journey) === */
+  .o-laptop{width:200px;height:140px}
+  .o-laptop .lid{
+    position:absolute;left:8px;right:8px;top:0;height:108px;
+    background:linear-gradient(180deg,#C8C2B6 0%, #A8A296 50%, #807868 100%);
+    border-radius:8px 8px 4px 4px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.4),
+      inset 0 -4px 0 rgba(0,0,0,.15),
+      0 8px 18px rgba(0,0,0,.5);
+  }
+  .o-laptop .screen{
+    position:absolute;left:14px;right:14px;top:10px;bottom:14px;
+    background:
+      linear-gradient(135deg, #1a2420 0%, #0f1614 100%);
+    border-radius:3px;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.6), inset 0 0 20px rgba(201,168,108,.08);
+    overflow:hidden;
+  }
+  .o-laptop .screen::before{
+    content:"";position:absolute;left:14px;top:14px;right:30%;height:3px;
+    background:rgba(201,168,108,.5);box-shadow:0 8px 0 rgba(201,168,108,.3), 0 16px 0 rgba(201,168,108,.2);
+  }
+  .o-laptop .screen::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.06) 50%,transparent 70%);
+  }
+  .o-laptop .base{
+    position:absolute;left:0;right:0;bottom:0;height:14px;
+    background:linear-gradient(180deg,#9A9286 0%, #6B6354 100%);
+    border-radius:2px 2px 6px 6px;
+    box-shadow:0 4px 8px rgba(0,0,0,.5);
+  }
+  .o-laptop .hinge{
+    position:absolute;left:30%;right:30%;top:106px;height:6px;
+    background:#574E42;border-radius:1px;
+  }
+
+  /* === Object: Pen + Inkwell (Contact) === */
+  .o-pen{width:130px;height:170px}
+  .o-pen .ink{
+    position:absolute;left:14px;bottom:0;width:84px;height:62px;
+    background:
+      radial-gradient(ellipse at 30% 30%, #4A3525 0%, #2A1A10 60%, #18100A 100%);
+    border-radius:6px 6px 12px 12px;
+    box-shadow:
+      inset 0 4px 6px rgba(255,255,255,.05),
+      inset 0 -10px 12px rgba(0,0,0,.5),
+      0 8px 14px rgba(0,0,0,.5);
+  }
+  .o-pen .ink::before{
+    content:"";position:absolute;left:14px;right:14px;top:6px;height:10px;
+    background:radial-gradient(ellipse, #0a0604 0%, #1a0e08 70%, transparent 100%);
+    border-radius:50%;
+    box-shadow:inset 0 1px 0 rgba(201,168,108,.2);
+  }
+  .o-pen .ink::after{
+    content:"INK";position:absolute;left:0;right:0;bottom:14px;text-align:center;
+    font-family:'Cormorant',serif;font-style:italic;font-size:11px;letter-spacing:.3em;
+    color:rgba(201,168,108,.55);
+  }
+  .o-pen .pen{
+    position:absolute;right:8px;top:0;width:10px;height:130px;
+    background:linear-gradient(180deg,#1a120c 0%,#2A1F16 40%,#C9A86C 75%,#8C6E40 100%);
+    border-radius:2px 2px 1px 1px;
+    transform-origin:bottom right;transform:rotate(14deg);
+    box-shadow:0 6px 10px rgba(0,0,0,.5);
+  }
+  .o-pen .pen::after{
+    content:"";position:absolute;left:50%;bottom:-6px;width:6px;height:12px;
+    transform:translateX(-50%);
+    background:linear-gradient(180deg,#C9A86C,#5C3A28);
+    clip-path:polygon(0 0,100% 0,50% 100%);
+  }
+
+  /* === Object: Mechanical Clock (Highlights) === */
+  .o-clock{width:130px;height:140px}
+  .o-clock .case{
+    position:absolute;inset:0;border-radius:50%;
+    background:
+      radial-gradient(circle at 30% 30%, #D4B377 0%, #8C6E40 60%, #5C4426 100%);
+    box-shadow:
+      inset 0 0 0 4px #3A2A18,
+      inset 0 0 0 6px #C9A86C,
+      0 10px 22px rgba(0,0,0,.55);
+  }
+  .o-clock .face{
+    position:absolute;inset:14px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #FAF2DD 0%, #E8D9B5 70%, #C7B485 100%);
+    box-shadow:inset 0 0 14px rgba(92,68,38,.4);
+  }
+  .o-clock .face::before, .o-clock .face::after{
+    content:"";position:absolute;left:50%;top:50%;background:#2A1F16;transform-origin:bottom center;border-radius:1px;
+  }
+  .o-clock .face::before{ width:3px;height:36px;transform:translate(-50%,-100%) rotate(38deg)}
+  .o-clock .face::after{ width:2px;height:48px;transform:translate(-50%,-100%) rotate(-78deg)}
+  .o-clock .pivot{
+    position:absolute;left:50%;top:50%;width:8px;height:8px;border-radius:50%;
+    background:#C9A86C;transform:translate(-50%,-50%);
+    box-shadow:0 0 0 1px #2A1F16;
+  }
+  .o-clock .tick{position:absolute;left:50%;top:8px;width:2px;height:6px;background:#2A1F16;transform-origin:1px 60px}
+  .o-clock .roman{
+    position:absolute;left:0;right:0;top:50%;text-align:center;transform:translateY(-50%);
+    font-family:'Playfair Display',serif;font-size:9px;color:#5C4426;letter-spacing:.4em;
+    text-transform:uppercase;
+    pointer-events:none;
+  }
+
+  /* ==== Content Panel (modern reveal) ==== */
+  .panel-scrim{
+    position:fixed;inset:0;z-index:80;background:rgba(15,11,9,.55);
+    opacity:0;pointer-events:none;transition:opacity .5s ease;
+    backdrop-filter:blur(2px);
+  }
+  .panel-scrim.show{opacity:1;pointer-events:auto}
+
+  .panel{
+    position:fixed;top:0;right:0;bottom:0;width:560px;z-index:90;
+    background:var(--cream-card);
+    color:var(--ink);
+    transform:translateX(100%);
+    transition:transform .68s cubic-bezier(.2,.75,.2,1);
+    box-shadow:-30px 0 80px rgba(0,0,0,.5);
+    display:flex;flex-direction:column;
+  }
+  .panel.show{transform:translateX(0)}
+  .panel .panel-inner{
+    flex:1;overflow-y:auto;padding:64px 64px 80px 64px;
+  }
+  .panel .close{
+    position:absolute;top:24px;right:24px;
+    width:36px;height:36px;border-radius:50%;border:1px solid rgba(42,37,32,.18);
+    background:transparent;color:var(--ink);cursor:pointer;
+    font-family:'Inter',sans-serif;font-size:14px;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .3s, border-color .3s;
+  }
+  .panel .close:hover{background:rgba(42,37,32,.06);border-color:rgba(42,37,32,.4)}
+
+  .panel .eyebrow{
+    font-family:'Inter',sans-serif;font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:var(--gold-soft);margin-bottom:18px;
+    opacity:0;transform:translateY(8px);
+  }
+  .panel h2{
+    font-family:'Playfair Display',serif;font-weight:700;
+    font-size:48px;line-height:1.05;letter-spacing:-.015em;margin-bottom:14px;
+    opacity:0;transform:translateY(12px);
+  }
+  .panel h2 em{font-style:italic;font-weight:400;color:var(--gold-soft)}
+  .panel .lede{
+    font-family:'Cormorant',serif;font-style:italic;font-weight:400;
+    font-size:22px;line-height:1.45;color:#574E42;margin-bottom:36px;max-width:46ch;
+    opacity:0;transform:translateY(12px);
+  }
+  .panel .body-block{
+    font-family:'Inter',sans-serif;font-size:15px;line-height:1.7;color:#3A332D;
+    max-width:48ch;margin-bottom:28px;
+    opacity:0;transform:translateY(12px);
+  }
+  .panel.show .eyebrow{animation:rise .55s .15s both}
+  .panel.show h2{animation:rise .65s .25s both}
+  .panel.show .lede{animation:rise .65s .38s both}
+  .panel.show .body-block{animation:rise .65s .50s both}
+  .panel.show .stack > *{animation:rise .6s .58s both}
+  .panel.show .stack > *:nth-child(2){animation-delay:.66s}
+  .panel.show .stack > *:nth-child(3){animation-delay:.74s}
+  .panel.show .stack > *:nth-child(4){animation-delay:.82s}
+  .panel.show .stack > *:nth-child(5){animation-delay:.90s}
+  .panel.show .footer-cta{animation:rise .6s .96s both}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+  /* Panel content blocks */
+  .stack{display:flex;flex-direction:column;gap:14px;margin-bottom:36px}
+  .essay-card{
+    border-top:1px solid rgba(42,37,32,.12);
+    padding:18px 0 16px 0;
+    display:flex;flex-direction:column;gap:6px;
+    cursor:pointer;transition:padding-left .3s ease;
+  }
+  .essay-card:hover{padding-left:8px}
+  .essay-card .meta{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;color:var(--sub);text-transform:uppercase}
+  .essay-card .t{font-family:'Cormorant',serif;font-weight:600;font-size:22px;color:var(--ink);line-height:1.25}
+  .essay-card .x{font-size:13px;color:#6B6055;line-height:1.55}
+
+  .timeline{display:flex;flex-direction:column;gap:0;border-left:1px solid rgba(42,37,32,.18);padding-left:24px;margin-left:6px}
+  .t-item{padding:14px 0;position:relative}
+  .t-item::before{
+    content:"";position:absolute;left:-30px;top:22px;width:9px;height:9px;border-radius:50%;
+    background:var(--cream-card);border:2px solid var(--gold-soft);
+  }
+  .t-item .y{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--gold-soft);letter-spacing:.14em}
+  .t-item .h{font-family:'Cormorant',serif;font-weight:600;font-size:20px;color:var(--ink);margin-top:2px}
+  .t-item .d{font-size:13px;color:#6B6055;line-height:1.6;margin-top:4px}
+
+  .player{
+    border:1px solid rgba(42,37,32,.14);border-radius:6px;padding:18px 20px;
+    display:flex;align-items:center;gap:16px;background:rgba(255,255,255,.5);
+  }
+  .player .play{
+    width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--cream-card);
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    font-size:14px;
+  }
+  .player .meta-text{display:flex;flex-direction:column;gap:3px;flex:1;min-width:0}
+  .player .meta-text .t{font-family:'Cormorant',serif;font-weight:600;font-size:18px;color:var(--ink)}
+  .player .meta-text .x{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);font-family:'JetBrains Mono',monospace}
+  .player .wave{display:flex;align-items:center;gap:2px;height:24px}
+  .player .wave i{display:block;width:2px;background:var(--gold-soft);border-radius:1px}
+
+  .form-row{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+  .form-row label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--sub)}
+  .form-row input, .form-row textarea{
+    border:none;border-bottom:1px solid rgba(42,37,32,.25);background:transparent;
+    font-family:'Inter',sans-serif;font-size:15px;color:var(--ink);padding:8px 0;
+    outline:none;transition:border-color .3s;
+  }
+  .form-row input:focus, .form-row textarea:focus{border-color:var(--gold-soft)}
+  .form-row textarea{resize:none;min-height:84px}
+  .contact-line{display:flex;justify-content:space-between;padding:14px 0;border-top:1px solid rgba(42,37,32,.12);font-size:14px}
+  .contact-line .k{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sub)}
+  .contact-line .v{color:var(--ink)}
+
+  .footer-cta{
+    margin-top:24px;display:flex;align-items:center;gap:10px;
+    font-family:'Inter',sans-serif;font-size:13px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink);cursor:pointer;
+    opacity:0;
+  }
+  .footer-cta .arrow{
+    width:34px;height:1px;background:var(--ink);position:relative;transition:width .35s ease;
+  }
+  .footer-cta:hover .arrow{width:54px}
+  .footer-cta .arrow::after{content:"";position:absolute;right:0;top:-4px;width:9px;height:9px;border-top:1px solid var(--ink);border-right:1px solid var(--ink);transform:rotate(45deg)}
+
+  /* hint at bottom */
+  .hint{
+    position:fixed;left:0;right:0;bottom:24px;text-align:center;z-index:30;
+    font-family:'Cormorant',serif;font-style:italic;font-size:13px;color:var(--sub);
+    letter-spacing:.04em;
+    opacity:.85;pointer-events:none;
+  }
+  .hint .dot{display:inline-block;width:4px;height:4px;border-radius:50%;background:var(--gold);margin:0 10px;vertical-align:middle}
+
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="vignette"></div>
+
+<header class="topbar">
+  <div class="mark"><span class="dot"></span> Jay Moon · Universal Insight</div>
+  <nav>
+    <a href="#">Insights</a>
+    <a href="#">Journey</a>
+    <a href="#">Sound</a>
+    <a href="#">Creations</a>
+    <a href="#">About</a>
+  </nav>
+  <div style="font-family:'Cormorant',serif;font-style:italic;text-transform:none;letter-spacing:.04em;font-size:14px;color:var(--sub)">est. 2016 · Seoul</div>
+</header>
+
+<main class="stage" id="stage">
+
+  <!-- Founder / personal anchor -->
+  <aside class="founder">
+    <div class="eyebrow"><span>Universal Insight</span><span class="rule"></span></div>
+    <div class="portrait-frame">
+      <div class="portrait">
+        <span class="placeholder-tag">portrait · drop-in</span>
+        <div class="silhouette"></div>
+        <span class="stamp">Seoul · 2026</span>
+      </div>
+    </div>
+    <div class="name">Jay <em>Moon</em></div>
+    <div class="han">문재홍 · Jaehong Moon</div>
+    <div class="role">Operator at the <span class="accent">Korea Football Association</span> for sixteen years. Quiet writer, slow builder, careful listener.</div>
+    <div class="signature">Jay Moon</div>
+    <div class="signature-line"></div>
+    <div class="credentials">est. 2016 · seoul <span>·</span> kfa</div>
+  </aside>
+
+  <!-- The shelf as his desk -->
+  <div class="shelf-wrap">
+    <div class="shelf-eyebrow">
+      The <em>Quiet</em> Archive
+      <span class="small">— seven artifacts from his desk —</span>
+    </div>
+  <div class="bookshelf" id="bookshelf">
+    <div class="frame-top"></div>
+    <div class="frame-side left"></div>
+    <div class="frame-side right"></div>
+
+    <!-- TOP SHELF -->
+    <div class="shelf top">
+      <div class="shelf-back"></div>
+      <div class="slots">
+        <!-- 1. Leather Notebook -> Insights -->
+        <div class="obj o-notebook" data-key="insights" tabindex="0">
+          <div class="pages"></div>
+          <div class="body">
+            <div class="emboss">Reflections<br/>by Jay Moon</div>
+          </div>
+          <div class="strap"></div>
+          <span class="label">01 · Insights</span>
+        </div>
+
+        <!-- 2. Hardcover Book -> First Reflection -->
+        <div class="obj o-book" data-key="reflection" tabindex="0">
+          <div class="spine">
+            <div class="title-v">Reflections · I</div>
+          </div>
+          <span class="label">02 · First Entry</span>
+        </div>
+
+        <!-- 3. Magnifier -> About -->
+        <div class="obj o-mag" data-key="about" tabindex="0">
+          <div class="ferrule"></div>
+          <div class="handle"></div>
+          <div class="glass"></div>
+          <span class="label">03 · About</span>
+        </div>
+      </div>
+      <div class="shelf-board"></div>
+    </div>
+
+    <!-- BOTTOM SHELF -->
+    <div class="shelf bottom">
+      <div class="shelf-back"></div>
+      <div class="slots">
+        <!-- 4. Headphones -> Sound -->
+        <div class="obj o-phones" data-key="sound" tabindex="0">
+          <div class="band"></div>
+          <div class="cup l"></div>
+          <div class="cup r"></div>
+          <span class="label">04 · Sound</span>
+        </div>
+
+        <!-- 5. Silver Laptop -> Journey -->
+        <div class="obj o-laptop" data-key="journey" tabindex="0">
+          <div class="lid">
+            <div class="screen"></div>
+          </div>
+          <div class="hinge"></div>
+          <div class="base"></div>
+          <span class="label">05 · The Journey</span>
+        </div>
+
+        <!-- 6. Pen + Inkwell -> Contact -->
+        <div class="obj o-pen" data-key="contact" tabindex="0">
+          <div class="ink"></div>
+          <div class="pen"></div>
+          <span class="label">06 · Contact</span>
+        </div>
+
+        <!-- 7. Mechanical Clock -> Highlights -->
+        <div class="obj o-clock" data-key="highlights" tabindex="0">
+          <div class="case"></div>
+          <div class="face">
+            <div class="roman">XII</div>
+          </div>
+          <div class="pivot"></div>
+          <span class="label">07 · Highlights</span>
+        </div>
+      </div>
+      <div class="shelf-board"></div>
+    </div>
+  </div>
+  </div>
+
+  <div class="hint">
+    Hover an artifact to lift it <span class="dot"></span> click to read
+  </div>
+</main>
+
+<div class="panel-scrim" id="scrim"></div>
+<aside class="panel" id="panel">
+  <button class="close" id="close" aria-label="Close">✕</button>
+  <div class="panel-inner" id="panelInner">
+    <!-- injected -->
+  </div>
+</aside>
+
+<script>
+  const PANELS = {
+    insights: {
+      eyebrow: "01 · Reflections by Jay Moon",
+      h2: 'Nine months,<br/><em>ninety-three</em> quiet thoughts.',
+      lede: '“The work that lasts is rarely the work that announces itself.”',
+      body: 'A collection of essays written daily over the past nine months — explorations on philosophy, AI, existence, quantum thought, and the soft places where these ideas overlap. Read in order, or wander.',
+      type: 'essays',
+      cta: 'Open the archive →'
+    },
+    reflection: {
+      eyebrow: "First entry · 2025.08.04",
+      h2: 'On the <em>weight</em> of unobserved things.',
+      lede: '“Before the question is asked, the answer is everywhere at once.”',
+      body: 'I’ve been thinking about superposition not as physics, but as a way of being. The thoughts that haven’t been written down yet — they exist in every possible form. Writing collapses them.\n\nThis is the first of what will become an everyday practice. — Jay Moon (Jaehong Moon)',
+      type: 'reading',
+      cta: 'Continue reading →'
+    },
+    about: {
+      eyebrow: "03 · Universal Insight",
+      h2: 'I translate <em>quiet</em> thinking into things.',
+      lede: '“I don’t build to be loud. I build because the thinking demanded a shape.”',
+      body: 'I’m Jay Moon (Jaehong Moon) — a 16-year operator at the intersection of sport, organization, and craft, and lately a curious builder thinking out loud with Claude. I sit with problems for a long time before I make anything. When I do, the goal is always the same: a calm thing that holds up under attention.',
+      type: 'about',
+      cta: 'Read the long form →'
+    },
+    sound: {
+      eyebrow: "04 · Thought → Sound",
+      h2: 'I don’t just create music.<br/>I <em>translate</em> thought into sound.',
+      lede: 'Suno is the loom; the thread is whatever I was thinking that morning.',
+      body: 'A small, growing catalog of pieces written by feeding ideas into Suno and shaping the output until the sound matches the thought it came from. Listen with headphones, in a quiet room.',
+      type: 'sound',
+      cta: 'Listen to the catalog →'
+    },
+    journey: {
+      eyebrow: "05 · 16 Years of Quiet Craft",
+      h2: 'Sixteen years.<br/>One <em>federation.</em>',
+      lede: '“The work that lasts is rarely the work that announces itself.”',
+      body: 'Joined the Korea Football Association in 2016 and stayed. The career below is a series of operational, product, and organizational chapters — most of them invisible from the outside.',
+      type: 'timeline',
+      cta: 'See full résumé →'
+    },
+    contact: {
+      eyebrow: "06 · Get in touch",
+      h2: 'Write me a <em>letter.</em>',
+      lede: 'I read everything. I reply slowly, and on purpose.',
+      body: '',
+      type: 'contact',
+      cta: 'Send →'
+    },
+    highlights: {
+      eyebrow: "07 · Project Highlights",
+      h2: 'Three things I’m <em>proud</em> of.',
+      lede: 'Selected from sixteen years of operational work, in no particular order.',
+      body: '',
+      type: 'highlights',
+      cta: 'Back to The Journey →'
+    }
+  };
+
+  function renderStack(type){
+    if(type==='essays'){
+      return `<div class="stack">
+        ${[
+          ['2026.04.18','On the weight of unobserved things.','Before the question is asked, the answer is everywhere at once.'],
+          ['2026.04.11','A grammar for slow attention.','Notes on what changes when you let an idea live a full week.'],
+          ['2026.03.30','Claude, and the etiquette of thinking aloud.','On the texture of dialogue with a machine that listens carefully.'],
+          ['2026.03.14','The mill, and what it grinds.','Why I named the practice 생각방앗간.']
+        ].map(([d,t,x])=>`
+          <div class="essay-card">
+            <div class="meta">${d}</div>
+            <div class="t">${t}</div>
+            <div class="x">${x}</div>
+          </div>`).join('')}
+      </div>`;
+    }
+    if(type==='reading'){
+      return `<div class="body-block">I’ve been thinking about superposition not as physics, but as a way of being. The thoughts that haven’t been written down yet — they exist in every possible form. Writing collapses them, the way observation collapses a wave.</div>
+      <div class="body-block">So this practice is, in a way, an experiment in deliberate collapse. Every morning I let one thought become a sentence, knowing the act will close every other version of it forever.</div>
+      <div class="body-block">This is the first of what is now ninety-three.</div>
+      <div class="body-block" style="font-family:'Cormorant',serif;font-style:italic;color:#6B6055">— Jay Moon (Jaehong Moon)</div>`;
+    }
+    if(type==='about'){
+      return `<div class="body-block">I’m Jay Moon — Jaehong Moon (문재홍) — and I’ve spent the last 16 years inside the Korea Football Association: operationally, organizationally, and lately on product. The work I’m most proud of is rarely the work the public sees: the structures that hold a federation together, the systems that make a stadium feel inevitable, the documents that ship a digital platform without breaking the people who run it.</div>
+      <div class="body-block">In the last year I’ve been working in the open with Claude — thinking through problems with it, then prototyping the answers in vibe-code. This site is one of those answers.</div>
+      <div class="body-block">If we share an interest in patient work, I’d love to hear from you.</div>`;
+    }
+    if(type==='sound'){
+      const tracks = [
+        ['I.','Quiet archive (instrumental)','3:42'],
+        ['II.','The mill at first light','4:11'],
+        ['III.','Letter to a quantum self','5:08'],
+        ['IV.','Walnut, lamp, rain','3:55'],
+        ['V.','Coda for an unobserved thing','6:20']
+      ];
+      const bars = Array.from({length:24},(_,i)=>{
+        const h = 6 + Math.round(Math.abs(Math.sin(i*1.3))*16);
+        return `<i style="height:${h}px"></i>`;
+      }).join('');
+      return `<div class="stack">${tracks.map(([n,t,d])=>`
+        <div class="player">
+          <div class="play">▶</div>
+          <div class="meta-text">
+            <div class="x">${n} · ${d}</div>
+            <div class="t">${t}</div>
+          </div>
+          <div class="wave">${bars}</div>
+        </div>`).join('')}</div>`;
+    }
+    if(type==='timeline'){
+      const items = [
+        ['2016','Joined Korea Football Association','First role: operations support — a quiet apprenticeship in how a federation actually runs.'],
+        ['2018','Stadium operations, A-Match','Operating staff for senior national-team matches. Learned how to make 60,000 people feel like the event was made for them.'],
+        ['2021','Cheonan Football Centre','Contributed to the long planning arc behind a national-scale training campus.'],
+        ['2023','PlayKFA 2.0','Product and information architecture for the federation’s flagship digital platform.'],
+        ['2024','EP — Independent Operation','Stood up and ran an internal program end-to-end, by myself, for one season.'],
+        ['2025','Daily writing + Claude','Began writing every morning, and thinking out loud with Claude in the afternoon.']
+      ];
+      return `<div class="timeline">
+        ${items.map(([y,h,d])=>`<div class="t-item"><div class="y">${y}</div><div class="h">${h}</div><div class="d">${d}</div></div>`).join('')}
+      </div>`;
+    }
+    if(type==='contact'){
+      return `<div class="form-row"><label>Your name</label><input type="text" placeholder="—" /></div>
+        <div class="form-row"><label>Email</label><input type="email" placeholder="—" /></div>
+        <div class="form-row"><label>The letter</label><textarea placeholder="Take your time."></textarea></div>
+        <div class="contact-line"><span class="k">Name</span><span class="v">Jay Moon · 문재홍</span></div>
+        <div class="contact-line"><span class="k">Direct</span><span class="v">jaymoon@universalinsight.kr</span></div>
+        <div class="contact-line"><span class="k">Located</span><span class="v">Seoul, South Korea</span></div>`;
+    }
+    if(type==='highlights'){
+      const items = [
+        ['PlayKFA 2.0','A federation-wide platform redesign — IA, content model, and the long handover that made it stick.','2023 — 2024'],
+        ['Cheonan Football Centre','Planning input for a national training campus. The work that won’t be visible until 2027.','2021 — ongoing'],
+        ['EP — Solo Season','Operated an internal program end-to-end without a team. The learning curve of my career.','2024']
+      ];
+      return `<div class="stack">${items.map(([h,d,y])=>`
+        <div class="essay-card">
+          <div class="meta">${y}</div>
+          <div class="t">${h}</div>
+          <div class="x">${d}</div>
+        </div>`).join('')}</div>`;
+    }
+    return '';
+  }
+
+  const stage = document.getElementById('stage');
+  const shelf = document.getElementById('bookshelf');
+  const panel = document.getElementById('panel');
+  const scrim = document.getElementById('scrim');
+  const inner = document.getElementById('panelInner');
+  const closeBtn = document.getElementById('close');
+  let activeObj = null;
+
+  function open(key, el){
+    const data = PANELS[key]; if(!data) return;
+    inner.innerHTML = `
+      <div class="eyebrow">${data.eyebrow}</div>
+      <h2>${data.h2}</h2>
+      ${data.lede ? `<div class="lede">${data.lede}</div>`:''}
+      ${data.body ? `<div class="body-block">${data.body}</div>`:''}
+      ${renderStack(data.type)}
+      <div class="footer-cta"><span class="arrow"></span><span>${data.cta}</span></div>
+    `;
+    // restart animations
+    panel.classList.remove('show');
+    void panel.offsetWidth;
+    panel.classList.add('show');
+    scrim.classList.add('show');
+    shelf.classList.add('dim');
+    if(activeObj) activeObj.classList.remove('active');
+    if(el){ el.classList.add('active'); activeObj = el; }
+  }
+  function close(){
+    panel.classList.remove('show');
+    scrim.classList.remove('show');
+    shelf.classList.remove('dim');
+    if(activeObj){ activeObj.classList.remove('active'); activeObj=null; }
+  }
+
+  document.querySelectorAll('.obj').forEach(o=>{
+    o.addEventListener('click', ()=> open(o.dataset.key, o));
+    o.addEventListener('keydown',(e)=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); open(o.dataset.key, o);} });
+  });
+  scrim.addEventListener('click', close);
+  closeBtn.addEventListener('click', close);
+  document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') close(); });
+</script>
+
+</body>
+</html>
