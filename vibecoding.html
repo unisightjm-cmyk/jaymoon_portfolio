@@ -4,220 +4,390 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiet Archive — Vibe Coding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #1c1512;
-    --text: #2A241D;
-    --sub: rgba(42,36,29,0.6);
-    --gold: #C9A86C;
-    --serif: "Crimson Text", "KoPub Batang", "Nanum Myeongjo", serif;
-    --sans: "Inter", "Pretendard", sans-serif;
+    --bg:    #16110d;
+    --paper: #e6dfd3;
+    --text:  #2A241D;
+    --sub:   rgba(42,36,29,0.55);
+    --gold:  #C9A86C;
+    --gold2: #a8864e;
+    --serif: 'Crimson Text', 'Nanum Myeongjo', serif;
+    --sans:  'Inter', sans-serif;
   }
-  * { box-sizing: border-box; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    margin: 0; padding: 40px 20px;
-    background: radial-gradient(circle at 50% 30%, #2c2218 0%, #16110d 100%);
-    color: #e6dfd3;
+    background: radial-gradient(ellipse at 50% 0%, #241b12 0%, #16110d 70%);
+    color: var(--paper);
     font-family: var(--serif);
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     overflow-x: hidden;
   }
-  
-  .header {
-    width: 100%; max-width: 1100px;
+
+  /* ── Header ── */
+  .topbar {
     display: flex; justify-content: space-between; align-items: center;
-    margin-bottom: 60px;
+    padding: 24px 48px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
   }
   .back-btn {
-    color: var(--gold); text-decoration: none; font-family: var(--sans);
-    font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
-    display: flex; align-items: center; gap: 8px; opacity: 0.8; transition: opacity 0.3s;
+    color: var(--gold); text-decoration: none;
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    opacity: 0.75; transition: opacity .2s;
   }
   .back-btn:hover { opacity: 1; }
+  .page-label {
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--gold); opacity: 0.6;
+  }
 
-  /* Layout */
-  .vibe-container {
-    width: 100%; max-width: 1100px;
-    display: flex; gap: 60px; align-items: center;
+  /* ── Main layout ── */
+  .main {
+    display: flex;
+    align-items: stretch;
+    min-height: calc(100vh - 74px);
   }
-  .vibe-left {
-    flex: 1.2;
-    display: flex; justify-content: center; align-items: center;
-    perspective: 2000px;
-  }
-  .vibe-right {
+
+  /* ── Left: Laptop stage ── */
+  .stage {
     flex: 1;
     display: flex; flex-direction: column;
-    background: #e6dfd3; color: var(--text);
-    padding: 50px; border-radius: 6px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-  }
-
-  /* 3D Laptop */
-  .laptop {
-    width: 500px; height: 320px;
+    justify-content: center; align-items: center;
+    padding: 60px 40px;
     position: relative;
+    overflow: hidden;
+  }
+  .stage::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 40%, rgba(201,168,108,0.06) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  /* ── 3D Laptop ── */
+  .scene {
+    perspective: 1200px;
+    perspective-origin: 50% 40%;
+  }
+
+  .laptop-wrap {
+    width: 380px;
     transform-style: preserve-3d;
-    transform: rotateX(20deg) rotateY(-15deg) rotateZ(5deg);
-    animation: floatLaptop 6s ease-in-out infinite alternate;
+    transform: rotateX(8deg) rotateY(-8deg);
+    animation: drift 8s ease-in-out infinite alternate;
+    position: relative;
   }
-  @keyframes floatLaptop {
-    0% { transform: rotateX(20deg) rotateY(-15deg) rotateZ(5deg) translateY(0); }
-    100% { transform: rotateX(22deg) rotateY(-12deg) rotateZ(4deg) translateY(-10px); }
-  }
-
-  .laptop-base {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 16px;
-    background: linear-gradient(to right, #9A9286 0%, #6B6354 100%);
-    border-radius: 4px 4px 10px 10px;
-    transform: rotateX(90deg) translateZ(-152px);
-    transform-origin: bottom;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-    display: flex; flex-direction: column; align-items: center;
-  }
-  .keyboard {
-    width: 80%; height: 160px; background: #333; margin-top: 10px; border-radius: 4px;
-    box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
-  }
-  .trackpad {
-    width: 30%; height: 50px; background: #555; margin-top: 10px; border-radius: 4px;
+  @keyframes drift {
+    0%   { transform: rotateX(8deg) rotateY(-8deg) translateY(0px); }
+    100% { transform: rotateX(10deg) rotateY(-5deg) translateY(-12px); }
   }
 
-  .laptop-lid {
-    position: absolute; bottom: 0; left: 0; right: 0; height: 320px;
-    background: linear-gradient(135deg, #2c2f33 0%, #1a1a1c 100%);
-    border-radius: 12px 12px 0 0;
-    transform-origin: bottom;
-    transform: rotateX(-90deg); /* Closed */
-    transition: transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-    border: 2px solid #555; border-bottom: none;
-    box-shadow: inset 0 0 0 4px #000;
-    display: flex; justify-content: center; align-items: center; padding: 12px;
+  /* --- Screen/lid --- */
+  .lid {
+    width: 380px;
+    height: 240px;
+    background: linear-gradient(160deg, #3a3a3e 0%, #232326 60%, #1a1a1d 100%);
+    border-radius: 10px 10px 2px 2px;
+    border: 2px solid #505056;
+    border-bottom: none;
+    transform-origin: bottom center;
+    transform: rotateX(-105deg);   /* closed */
+    transition: transform 1.2s cubic-bezier(0.4, 0, 0.1, 1);
+    transform-style: preserve-3d;
+    position: relative;
+    box-shadow:
+      0 -2px 8px rgba(0,0,0,0.4),
+      inset 0 0 0 6px #111;
   }
-  .laptop.open .laptop-lid {
-    transform: rotateX(-5deg); /* Opened */
+  .laptop-wrap.open .lid {
+    transform: rotateX(-8deg);      /* open */
   }
 
-  .laptop-screen {
-    width: 100%; height: 100%; background: #000; border-radius: 2px;
-    overflow: hidden; position: relative;
+  /* Screen inner */
+  .screen-inner {
+    position: absolute; inset: 8px;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
     cursor: zoom-in;
   }
-  .laptop-screen img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: opacity 0.5s; opacity: 0;
+  .screen-inner img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity .6s ease;
   }
-  .laptop-screen img.loaded { opacity: 1; }
+  .screen-inner img.loaded { opacity: 1; }
+  .screen-placeholder {
+    width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 8px;
+    color: rgba(255,255,255,0.2);
+    font-family: var(--sans); font-size: 11px;
+    letter-spacing: 0.1em;
+  }
+  .screen-placeholder svg { opacity: 0.2; }
 
-  /* Text Content */
-  .post-date {
-    font-family: var(--sans); font-size: 11px; letter-spacing: 0.15em;
-    color: var(--sub); text-transform: uppercase; margin-bottom: 16px;
-    display: block;
+  /* Apple-ish logo on lid back */
+  .lid-back {
+    position: absolute; inset: 0;
+    backface-visibility: visible;
+    background: linear-gradient(160deg, #4a4a50 0%, #2a2a2e 100%);
+    border-radius: 10px 10px 2px 2px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* --- Hinge bar --- */
+  .hinge {
+    width: 380px; height: 8px;
+    background: linear-gradient(to bottom, #5a5a60, #3a3a3e);
+    border-radius: 0 0 1px 1px;
+    position: relative;
+    z-index: 2;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  }
+
+  /* --- Base/keyboard --- */
+  .base {
+    width: 380px; height: 26px;
+    background: linear-gradient(160deg, #4a4a50 0%, #2e2e33 100%);
+    border-radius: 2px 2px 8px 8px;
+    position: relative;
+    box-shadow:
+      0 14px 40px rgba(0,0,0,0.7),
+      0 4px 12px rgba(0,0,0,0.5);
+  }
+  .base::before {
+    content: '';
+    position: absolute;
+    top: 6px; left: 50%; transform: translateX(-50%);
+    width: 80px; height: 4px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+  }
+  /* trackpad slot */
+  .base::after {
+    content: '';
+    position: absolute;
+    top: 14px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 5px;
+    background: rgba(0,0,0,0.25);
+    border-radius: 3px;
+  }
+
+  /* Ground shadow */
+  .shadow {
+    width: 280px; height: 16px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
+    margin: 12px auto 0;
+    filter: blur(6px);
+    animation: shadowDrift 8s ease-in-out infinite alternate;
+  }
+  @keyframes shadowDrift {
+    0%   { transform: translateY(0) scaleX(1); opacity: .5; }
+    100% { transform: translateY(4px) scaleX(0.85); opacity: .3; }
+  }
+
+  /* Nav dots */
+  .laptop-nav {
+    display: flex; gap: 10px; margin-top: 32px;
+    align-items: center;
+  }
+  .nav-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+  }
+  .nav-dot.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    transform: scale(1.2);
+  }
+  .laptop-nav button {
+    background: transparent;
+    border: 1px solid rgba(201,168,108,0.3);
+    color: var(--gold); cursor: pointer;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    font-size: 13px; line-height: 1;
+    transition: background .2s, border-color .2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .laptop-nav button:hover:not(:disabled) {
+    background: rgba(201,168,108,0.15);
+    border-color: var(--gold);
+  }
+  .laptop-nav button:disabled { opacity: 0.25; cursor: not-allowed; }
+
+  /* ── Right: Content panel ── */
+  .content-panel {
+    width: 420px;
+    background: var(--paper);
+    color: var(--text);
+    padding: 64px 52px;
+    display: flex; flex-direction: column;
+    position: relative;
+    overflow-y: auto;
+    box-shadow: -20px 0 60px rgba(0,0,0,0.4);
+  }
+  .content-panel::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(to right, var(--gold2), var(--gold), var(--gold2));
+  }
+
+  .post-eyebrow {
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--gold2); margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .post-eyebrow::after {
+    content: ''; flex: 1; height: 1px;
+    background: rgba(42,36,29,0.15);
   }
   .post-title {
-    font-size: 26px; font-weight: normal; margin: 0 0 24px 0;
-    line-height: 1.3; color: #1a1a1a;
+    font-size: 28px; font-weight: normal;
+    line-height: 1.25; margin-bottom: 20px;
+    color: #1a1a1a;
+    font-family: var(--serif);
   }
+  .post-meta {
+    font-family: var(--sans); font-size: 11px;
+    color: var(--sub); margin-bottom: 28px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .post-meta .dot { opacity: 0.4; }
+  .post-meta .rel { color: var(--gold2); }
   .post-body {
-    font-size: 15px; line-height: 1.8; color: #333;
-    white-space: pre-wrap; flex: 1;
+    font-size: 16px; line-height: 1.85;
+    color: #333; flex: 1;
   }
-  .post-body p { margin-top: 0; margin-bottom: 1.5em; }
-
-  /* Nav */
-  .post-nav {
-    display: flex; justify-content: space-between; align-items: center;
-    margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.1);
-  }
-  .post-nav button {
-    background: transparent; border: none; font-family: var(--sans);
-    font-size: 11px; letter-spacing: 0.1em; color: var(--sub);
-    cursor: pointer; transition: color 0.2s; text-transform: uppercase;
-  }
-  .post-nav button:hover:not(:disabled) { color: var(--text); }
-  .post-nav button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .post-body p { margin-bottom: 1.4em; }
 
   .empty-state {
-    text-align: center; color: var(--sub); font-style: italic;
-    margin-top: 100px;
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 12px; opacity: 0.4;
+    font-style: italic; font-size: 18px;
   }
 
-  /* Lightbox */
+  .counter {
+    margin-top: auto; padding-top: 28px;
+    border-top: 1px solid rgba(42,36,29,0.12);
+    font-family: var(--sans); font-size: 10px;
+    letter-spacing: 0.15em; color: var(--sub);
+    text-transform: uppercase;
+  }
+
+  /* ── Lightbox ── */
   .lightbox {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.9); z-index: 9999;
-    display: none; flex-direction: column; align-items: center; justify-content: center;
-    padding: 40px; opacity: 0; transition: opacity 0.3s;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.92); z-index: 9000;
+    display: none; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px; opacity: 0; transition: opacity .3s;
   }
   .lightbox.show { display: flex; opacity: 1; }
   .lightbox img {
-    max-width: 100%; max-height: 80vh; object-fit: contain;
-    border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    max-width: 100%; max-height: 80vh;
+    object-fit: contain; border-radius: 4px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.7);
   }
-  .lightbox-controls {
-    margin-top: 20px; display: flex; gap: 20px;
+  .lb-ctrl {
+    margin-top: 24px; display: flex; gap: 16px;
   }
-  .lightbox-btn {
-    background: transparent; border: 1px solid var(--gold); color: var(--gold);
-    padding: 10px 20px; border-radius: 4px; font-family: var(--sans); font-size: 12px;
-    letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; text-decoration: none;
-    transition: background 0.2s, color 0.2s;
+  .lb-btn {
+    background: transparent;
+    border: 1px solid rgba(201,168,108,0.4);
+    color: var(--gold); padding: 10px 22px;
+    border-radius: 3px; font-family: var(--sans);
+    font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; cursor: pointer;
+    text-decoration: none; transition: background .2s;
   }
-  .lightbox-btn:hover { background: var(--gold); color: #1a1a1a; }
+  .lb-btn:hover { background: rgba(201,168,108,0.12); }
 
-  @media(max-width: 900px) {
-    .vibe-container { flex-direction: column; gap: 40px; }
-    .vibe-left { width: 100%; }
-    .laptop { transform: scale(0.7) rotateX(20deg) rotateY(0deg) rotateZ(0deg); animation: none; }
-    .vibe-right { width: 100%; padding: 30px 20px; }
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .main { flex-direction: column; }
+    .content-panel { width: 100%; box-shadow: 0 -20px 40px rgba(0,0,0,0.3); }
+    .stage { padding: 48px 20px 32px; }
+    .laptop-wrap { transform: scale(0.78) rotateX(8deg) rotateY(-6deg); animation: none; }
+    .topbar { padding: 18px 24px; }
   }
-  @media(max-width: 500px) {
-    .laptop { transform: scale(0.6) rotateX(20deg) rotateY(0deg) rotateZ(0deg); }
+  @media (max-width: 500px) {
+    .laptop-wrap { transform: scale(0.6) rotateX(8deg) rotateY(0); }
   }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <a href="index.html" class="back-btn">← 돌아가기 / Back</a>
-  <div style="font-size: 14px; color: var(--gold); font-style: italic;">Vibe Coding Creations</div>
-</div>
+<header class="topbar">
+  <a href="index.html" class="back-btn">← 돌아가기</a>
+  <span class="page-label">Vibe Coding Creations</span>
+</header>
 
-<div class="vibe-container" id="vibeContainer">
-  <div class="vibe-left">
-    <div class="laptop" id="laptop">
-      <div class="laptop-base">
-        <div class="keyboard"></div>
-        <div class="trackpad"></div>
-      </div>
-      <div class="laptop-lid">
-        <div class="laptop-screen" id="postPhoto">
-          <div style="color:rgba(255,255,255,0.3); font-family:var(--sans); font-size:12px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">No Image</div>
+<div class="main">
+
+  <!-- Left: Laptop 3D stage -->
+  <div class="stage">
+    <div class="scene">
+      <div class="laptop-wrap" id="laptopWrap">
+        <!-- Screen lid -->
+        <div class="lid" id="lid">
+          <div class="screen-inner" id="postPhoto">
+            <div class="screen-placeholder">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+              </svg>
+              <span>No Image</span>
+            </div>
+          </div>
         </div>
+        <!-- Hinge -->
+        <div class="hinge"></div>
+        <!-- Keyboard base -->
+        <div class="base"></div>
       </div>
     </div>
-  </div>
-  <div class="vibe-right">
-    <div id="postContent">
-      <!-- Content injected here -->
+
+    <!-- Shadow -->
+    <div class="shadow"></div>
+
+    <!-- Navigation -->
+    <div class="laptop-nav">
+      <button id="prevBtn" title="이전">‹</button>
+      <div id="dotContainer" style="display:flex;gap:8px;"></div>
+      <button id="nextBtn" title="다음">›</button>
     </div>
-    <div class="post-nav">
-      <button id="prevBtn">← Previous</button>
-      <span id="pageIndicator" style="font-family:var(--sans); font-size:10px; color:var(--sub);"></span>
-      <button id="nextBtn">Next →</button>
-    </div>
   </div>
+
+  <!-- Right: Content -->
+  <div class="content-panel">
+    <div id="postContent" style="display:flex;flex-direction:column;flex:1;">
+      <div class="empty-state">아직 등록된 산출물이 없습니다.</div>
+    </div>
+    <div class="counter" id="counter"></div>
+  </div>
+
 </div>
 
+<!-- Lightbox -->
 <div class="lightbox" id="lightbox">
-  <img id="lightboxImg" src="" alt="Full size image" />
-  <div class="lightbox-controls">
-    <a href="#" id="lightboxDownload" download="vibecoding_image.png" class="lightbox-btn">사진 다운로드</a>
-    <button id="lightboxClose" class="lightbox-btn">닫기</button>
+  <img id="lbImg" src="" alt="">
+  <div class="lb-ctrl">
+    <a id="lbDownload" href="#" download="capture.png" class="lb-btn">다운로드</a>
+    <button id="lbClose" class="lb-btn">닫기</button>
   </div>
 </div>
 
@@ -225,118 +395,165 @@
 <script src="data.js"></script>
 <script>
   let posts = [];
-  let currentIndex = 0;
+  let idx = 0;
+  let isOpen = false;
 
+  /* ── Laptop open/close ── */
+  function openLid() {
+    document.getElementById('laptopWrap').classList.add('open');
+    isOpen = true;
+  }
+  function closeLid(cb) {
+    document.getElementById('laptopWrap').classList.remove('open');
+    isOpen = false;
+    setTimeout(cb, 600);
+  }
+
+  /* ── Load posts ── */
   async function loadPosts() {
-    // 1. Local
+    // 1. Local first (instant)
     try {
       const saved = localStorage.getItem('ui.archive.vibes');
-      if(saved) {
+      if (saved) {
         posts = JSON.parse(saved);
-        if(posts && posts.length > 0) posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+        if (posts.length) {
+          posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+          renderPost(true);
+        }
       }
     } catch(e) {}
-    renderPost();
 
-    // 2. Supabase
+    // 2. Supabase (background)
     try {
-      const remotePosts = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
-      if(remotePosts && remotePosts.length > 0) {
-        posts = remotePosts;
-        posts.sort((a,b) => new Date(b.date) - new Date(a.date));
-        renderPost();
+      const remote = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+      if (remote && remote.length) {
+        posts = remote;
+        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        renderPost(true);
       }
     } catch(e) { console.error(e); }
   }
 
-  function renderPost() {
-    const contentEl = document.getElementById('postContent');
-    const photoEl = document.getElementById('postPhoto');
-    const laptop = document.getElementById('laptop');
-    
-    // Close laptop lid before changing
-    laptop.classList.remove('open');
-    
-    setTimeout(() => {
-      if(posts.length === 0) {
-        photoEl.innerHTML = '<div style="color:rgba(255,255,255,0.3); font-family:var(--sans); font-size:12px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">빈 페이지</div>';
-        contentEl.innerHTML = '<div class="empty-state">아직 등록된 산출물이 없습니다.</div>';
-        document.getElementById('prevBtn').disabled = true;
-        document.getElementById('nextBtn').disabled = true;
-        document.getElementById('pageIndicator').textContent = '0 / 0';
-        laptop.classList.add('open');
-        return;
-      }
+  /* ── Render ── */
+  function renderPost(isInitial) {
+    buildDots();
 
-      const post = posts[currentIndex];
-      
-      if(post.image) {
-        photoEl.innerHTML = `<img src="${post.image}" alt="Vibe Coding visual" onload="this.classList.add('loaded')" onclick="openLightbox('${post.image}')" />`;
-      } else {
-        photoEl.innerHTML = '<div style="color:rgba(255,255,255,0.3); font-family:var(--sans); font-size:12px; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">No Image</div>';
-      }
-      
-      const d = new Date(post.date);
-      const dateStr = isNaN(d.getTime()) ? '' : d.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
-      
-      let relativeStr = '';
-      if(!isNaN(d.getTime())) {
-        const now = new Date();
-        const diffMs = now - d;
-        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        const diffMonths = Math.floor(diffDays / 30);
-        const diffYears = Math.floor(diffDays / 365);
-        if (diffYears > 0) relativeStr = `${diffYears}년 전`;
-        else if (diffMonths > 0) relativeStr = `${diffMonths}개월 전`;
-        else if (diffDays > 0) relativeStr = `${diffDays}일 전`;
-        else relativeStr = `오늘`;
-      }
+    if (posts.length === 0) {
+      document.getElementById('postContent').innerHTML = '<div class="empty-state">아직 등록된 산출물이 없습니다.</div>';
+      document.getElementById('counter').textContent = '';
+      document.getElementById('prevBtn').disabled = true;
+      document.getElementById('nextBtn').disabled = true;
+      updateScreen(null);
+      openLid();
+      return;
+    }
 
-      contentEl.innerHTML = `
-        <span class="post-date">${dateStr} <span style="color:var(--gold); margin-left:8px; text-transform:none;">${relativeStr}</span></span>
-        <h1 class="post-title">${post.title || 'Untitled'}</h1>
-        <div class="post-body">${post.body ? post.body.split(/\n\n+/).map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('') : ''}</div>
-      `;
+    const post = posts[idx];
 
-      document.getElementById('prevBtn').disabled = (currentIndex === 0);
-      document.getElementById('nextBtn').disabled = (currentIndex === posts.length - 1);
-      document.getElementById('pageIndicator').textContent = `${currentIndex + 1} / ${posts.length}`;
-      
-      // Open laptop lid
-      laptop.classList.add('open');
-    }, 400); // Wait for lid to close
+    if (isInitial) {
+      updateContent(post);
+      updateScreen(post.image);
+      openLid();
+    } else {
+      // Close lid → swap → reopen
+      closeLid(() => {
+        updateContent(post);
+        updateScreen(post.image);
+        openLid();
+      });
+    }
+  }
+
+  function updateScreen(imgSrc) {
+    const el = document.getElementById('postPhoto');
+    if (imgSrc) {
+      el.innerHTML = `<img src="${imgSrc}" alt="screenshot"
+        onload="this.classList.add('loaded')"
+        onclick="showLightbox('${imgSrc}')"
+        style="cursor:zoom-in;">`;
+    } else {
+      el.innerHTML = `<div class="screen-placeholder">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+        </svg>
+        <span>No Image</span>
+      </div>`;
+    }
+  }
+
+  function updateContent(post) {
+    const d = new Date(post.date);
+    const dateStr = isNaN(d) ? '' : d.toLocaleDateString('ko-KR', { year:'numeric', month:'long', day:'numeric' });
+    let rel = '';
+    if (!isNaN(d)) {
+      const diff = Math.floor((Date.now() - d) / 86400000);
+      if (diff >= 365) rel = Math.floor(diff/365) + '년 전';
+      else if (diff >= 30) rel = Math.floor(diff/30) + '개월 전';
+      else if (diff > 0)  rel = diff + '일 전';
+      else rel = '오늘';
+    }
+
+    const bodyHtml = (post.body || '')
+      .split(/\n\n+/)
+      .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`)
+      .join('');
+
+    document.getElementById('postContent').innerHTML = `
+      <div class="post-eyebrow">Vibe Coding</div>
+      <h1 class="post-title">${post.title || 'Untitled'}</h1>
+      <div class="post-meta">
+        <span>${dateStr}</span>
+        ${rel ? `<span class="dot">·</span><span class="rel">${rel}</span>` : ''}
+      </div>
+      <div class="post-body">${bodyHtml}</div>
+    `;
+
+    document.getElementById('counter').textContent =
+      `${String(idx+1).padStart(2,'0')} / ${String(posts.length).padStart(2,'0')}`;
+    document.getElementById('prevBtn').disabled = (idx === 0);
+    document.getElementById('nextBtn').disabled = (idx === posts.length - 1);
+  }
+
+  function buildDots() {
+    const c = document.getElementById('dotContainer');
+    c.innerHTML = '';
+    posts.forEach((_, i) => {
+      const d = document.createElement('button');
+      d.className = 'nav-dot' + (i === idx ? ' active' : '');
+      d.style.cssText = 'background:none;border:1px solid rgba(255,255,255,0.25);width:8px;height:8px;border-radius:50%;cursor:pointer;padding:0;transition:background .2s,transform .2s;';
+      if (i === idx) { d.style.background = 'var(--gold)'; d.style.borderColor = 'var(--gold)'; d.style.transform = 'scale(1.25)'; }
+      d.addEventListener('click', () => { if (i !== idx) { idx = i; renderPost(false); } });
+      c.appendChild(d);
+    });
   }
 
   document.getElementById('prevBtn').addEventListener('click', () => {
-    if(currentIndex > 0) { currentIndex--; renderPost(); }
+    if (idx > 0) { idx--; renderPost(false); }
   });
   document.getElementById('nextBtn').addEventListener('click', () => {
-    if(currentIndex < posts.length - 1) { currentIndex++; renderPost(); }
+    if (idx < posts.length - 1) { idx++; renderPost(false); }
   });
 
-  // Lightbox
-  function openLightbox(src) {
+  /* ── Lightbox ── */
+  function showLightbox(src) {
     const lb = document.getElementById('lightbox');
-    document.getElementById('lightboxImg').src = src;
-    document.getElementById('lightboxDownload').href = src;
+    document.getElementById('lbImg').src = src;
+    document.getElementById('lbDownload').href = src;
     lb.style.display = 'flex';
-    setTimeout(() => lb.classList.add('show'), 10);
+    requestAnimationFrame(() => lb.classList.add('show'));
   }
-  function closeLightbox() {
+  function hideLightbox() {
     const lb = document.getElementById('lightbox');
     lb.classList.remove('show');
     setTimeout(() => lb.style.display = 'none', 300);
   }
-  document.getElementById('lightboxClose').addEventListener('click', closeLightbox);
-  document.getElementById('lightbox').addEventListener('click', (e) => {
-    if(e.target.id === 'lightbox') closeLightbox();
-  });
+  document.getElementById('lbClose').addEventListener('click', hideLightbox);
+  document.getElementById('lightbox').addEventListener('click', e => { if (e.target.id === 'lightbox') hideLightbox(); });
 
-  window.addEventListener('DOMContentLoaded', () => {
-    // start slightly closed, then open
-    setTimeout(loadPosts, 300);
-  });
+  window.showLightbox = showLightbox;
+
+  /* ── Boot ── */
+  setTimeout(loadPosts, 200);
 </script>
-
 </body>
 </html>
