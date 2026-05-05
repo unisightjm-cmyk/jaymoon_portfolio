@@ -732,32 +732,44 @@
     }
 
     async function init(){
-      state = await UI_ARCHIVE.loadAsync();
+      // 1. Initial render with local data (fast)
+      state = UI_ARCHIVE.load();
       lang = UI_ARCHIVE.getLang();
       renderTopbar();
       renderObjects();
+      
       document.getElementById('scrim').addEventListener('click', closePanel);
       document.getElementById('close').addEventListener('click', closePanel);
       document.addEventListener('keydown', e=>{ if(e.key==='Escape') closePanel(); });
       document.querySelectorAll('#langToggle button').forEach(b=>{
         b.addEventListener('click', ()=> setLang(b.dataset.lang));
       });
+      
       // listen for admin updates from same browser
       window.addEventListener('storage', async e=>{
         if(e.key === 'ui.archive.v4'){
-          state = await UI_ARCHIVE.loadAsync();
+          state = UI_ARCHIVE.load(); // render fast
           renderTopbar();
           renderObjects();
         }
       });
+
+      // 2. Background fetch from Supabase (async)
+      try {
+        const remoteState = await UI_ARCHIVE.loadAsync();
+        if (remoteState) {
+          state = remoteState;
+          renderTopbar();
+          renderObjects();
+        }
+      } catch(err) {
+        console.error("Failed to load from Supabase:", err);
+      }
     }
     return { init };
   })();
   
-  // hide body until loaded
-  document.body.style.opacity = '0';
-  document.body.style.transition = 'opacity 0.5s ease';
-  App.init().then(() => document.body.style.opacity = '1');
+  App.init();
 </script>
 
 </body>

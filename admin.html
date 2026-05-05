@@ -392,10 +392,21 @@
 
   /* ---------- login flow ---------- */
   async function showDash(){
-    state = await UI_ARCHIVE.loadAsync();
+    // 1. Initial render with local data (fast)
+    state = UI_ARCHIVE.load();
     document.getElementById('loginView').style.display='none';
     document.getElementById('dashView').style.display='grid';
     initDash();
+
+    // 2. Background fetch from Supabase (async)
+    try {
+      const remoteState = await UI_ARCHIVE.loadAsync();
+      if(remoteState) {
+        state = remoteState;
+        // Optionally re-render current pane if needed, but for admin it's fine
+        // since they will just start editing.
+      }
+    } catch(e) { console.error("Failed to load from Supabase:", e); }
   }
   if(UI_ARCHIVE.isLoggedIn()) showDash();
 

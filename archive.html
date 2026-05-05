@@ -210,13 +210,25 @@
   let currentIndex = 0;
 
   async function loadPosts() {
+    // 1. Initial render with local data (fast)
     try {
-      posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
-      if(posts && posts.length > 0) {
+      const saved = localStorage.getItem('ui.archive.posts');
+      if(saved) {
+        posts = JSON.parse(saved);
+        if(posts && posts.length > 0) posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+      }
+    } catch(e) {}
+    renderPost();
+
+    // 2. Background fetch from Supabase (async)
+    try {
+      const remotePosts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+      if(remotePosts && remotePosts.length > 0) {
+        posts = remotePosts;
         posts.sort((a,b) => new Date(b.date) - new Date(a.date));
+        renderPost();
       }
     } catch(e) { console.error(e); }
-    renderPost();
   }
 
   function renderPost() {
