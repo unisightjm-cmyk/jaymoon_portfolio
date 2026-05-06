@@ -116,15 +116,16 @@
     background: #232326;
     border-radius: 10px 10px 0 0;
     border: 2px solid #505056;
-    border-bottom: 4px solid #333;
+    border-bottom: 2px solid #333;
     transform-origin: bottom center;
     transform: rotateX(-90deg);   /* closed */
     transition: transform 1.2s cubic-bezier(0.4, 0, 0.1, 1);
     transform-style: preserve-3d;
     box-shadow: inset 0 0 0 6px #111;
+    z-index: 5;
   }
   .laptop-wrap.open .lid {
-    transform: rotateX(0deg);      /* open */
+    transform: rotateX(-5deg);      /* open and tilted slightly back */
   }
 
   /* Screen inner */
@@ -137,7 +138,8 @@
   }
   .screen-inner img {
     width: 100%; height: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    background: #000;
     opacity: 0;
     transition: opacity .6s ease;
   }
@@ -180,23 +182,29 @@
     box-shadow:
       0 14px 40px rgba(0,0,0,0.7),
       0 4px 12px rgba(0,0,0,0.5);
+    transform-style: preserve-3d;
   }
+  /* Keyboard texture */
   .base::before {
     content: '';
     position: absolute;
-    top: 6px; left: 50%; transform: translateX(-50%);
-    width: 80px; height: 4px;
-    background: rgba(0,0,0,0.3);
-    border-radius: 4px;
+    top: 4px; left: 10px; right: 10px; height: 12px;
+    background-image: 
+      repeating-linear-gradient(90deg, transparent 0 10px, rgba(0,0,0,0.3) 10px 12px),
+      repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,0.3) 4px 6px);
+    background-size: 12px 6px;
+    opacity: 0.6;
+    border-radius: 2px;
   }
   /* trackpad slot */
   .base::after {
     content: '';
     position: absolute;
-    top: 14px; left: 50%; transform: translateX(-50%);
-    width: 60px; height: 5px;
-    background: rgba(0,0,0,0.25);
-    border-radius: 3px;
+    bottom: 4px; left: 50%; transform: translateX(-50%);
+    width: 70px; height: 6px;
+    background: rgba(0,0,0,0.4);
+    border-radius: 2px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
   }
 
   /* Ground shadow */

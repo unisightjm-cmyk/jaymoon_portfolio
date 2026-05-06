@@ -109,8 +109,12 @@ window.UI_ARCHIVE = (function(){
 
     /* misc text used inside panels */
     strings: {
-      ko: { closeAria: "닫기", essayMore: "더 읽기", langKo: "한국어", langEn: "EN", admin: "관리자" },
-      en: { closeAria: "Close",  essayMore: "Read more", langKo: "KO", langEn: "English", admin: "Admin" }
+      ko: { closeAria: "닫기", essayMore: "더 읽기", langKo: "한국어", langEn: "EN", admin: "관리자", 
+            msgPlaceholder: "남기고 싶은 말을 적어주세요...", msgSubmit: "쪽지 남기기", 
+            emailSubmit: "이메일 보내기", msgSuccess: "쪽지가 보관되었습니다." },
+      en: { closeAria: "Close",  essayMore: "Read more", langKo: "KO", langEn: "English", admin: "Admin",
+            msgPlaceholder: "Leave a message...", msgSubmit: "Send Note", 
+            emailSubmit: "Send Email", msgSuccess: "Message saved." }
     }
   };
 

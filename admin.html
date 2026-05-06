@@ -717,7 +717,10 @@
     
     let dateVal = document.getElementById('vibeDate').value;
     if(!dateVal) dateVal = new Date().toISOString();
-    else dateVal = new Date(dateVal).toISOString();
+    else {
+      // Ensure local date is preserved by adding noon time
+      dateVal = new Date(dateVal + 'T12:00:00').toISOString();
+    }
 
     const vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
     
@@ -764,7 +767,12 @@
   async function renderVibesList() {
     const list = document.getElementById('vibesList');
     if(!list) return;
-    const vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    let vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    // Migration check: if empty, check if they exist in state.vibes (old structure)
+    if(vibes.length === 0 && state && state.vibes && state.vibes.length > 0) {
+      vibes = state.vibes;
+      await UI_ARCHIVE.saveItemAsync('ui.archive.vibes', vibes);
+    }
     if(vibes.length === 0) {
       list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center;">작성된 글이 없습니다.</div>';
       return;
@@ -881,7 +889,10 @@
     
     let dateVal = document.getElementById('postDate').value;
     if(!dateVal) dateVal = new Date().toISOString();
-    else dateVal = new Date(dateVal).toISOString();
+    else {
+      // Ensure local date is preserved
+      dateVal = new Date(dateVal + 'T12:00:00').toISOString();
+    }
 
     const posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
     
