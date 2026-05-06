@@ -72,148 +72,122 @@
 
   /* ── 3D Laptop ── */
   .scene {
-    perspective: 1500px;
-    width: 400px; height: 300px;
-    display: flex; justify-content: center; align-items: flex-end;
-  }
-
-  .laptop-wrap {
-    width: 380px; height: 20px;
-    transform-style: preserve-3d;
-    transform: rotateX(15deg) rotateY(-10deg);
-    animation: drift 8s ease-in-out infinite alternate;
+    perspective: 2000px;
+    width: 600px; height: 500px;
+    display: flex; justify-content: center; align-items: center;
     position: relative;
-    margin-bottom: 40px;
+  }
+  .laptop-wrap {
+    position: relative;
+    width: 440px; height: 300px;
+    transform-style: preserve-3d;
+    transform: rotateX(-20deg) rotateY(-15deg);
+    transition: transform 0.5s ease;
+    animation: drift 8s ease-in-out infinite alternate;
   }
   @keyframes drift {
-    0%   { transform: rotateX(15deg) rotateY(-10deg) translateY(0px); }
-    100% { transform: rotateX(18deg) rotateY(-5deg) translateY(-10px); }
+    0%   { transform: rotateX(-20deg) rotateY(-18deg) translateY(0); }
+    100% { transform: rotateX(-15deg) rotateY(-10deg) translateY(-15px); }
   }
 
-  /* --- Base/keyboard --- */
+  /* Keyboard base (Floor) */
   .base {
-    position: absolute; inset: 0;
-    height: 20px;
-    background: linear-gradient(160deg, #4a4a50 0%, #2e2e33 100%);
-    border-radius: 2px 2px 8px 8px;
+    position: absolute;
+    top: 50%; left: 0; right: 0;
+    height: 300px;
+    background: linear-gradient(180deg, #4a4a50 0%, #2e2e33 100%);
+    border-radius: 8px;
+    transform-origin: top center;
+    transform: rotateX(80deg);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     transform-style: preserve-3d;
-    box-shadow:
-      0 10px 30px rgba(0,0,0,0.6),
-      0 4px 10px rgba(0,0,0,0.4);
   }
+  /* Keyboard keys */
+  .base::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px; right: 20px; bottom: 80px;
+    background-image: 
+      repeating-linear-gradient(90deg, transparent 0 18px, rgba(0,0,0,0.4) 18px 22px),
+      repeating-linear-gradient(0deg, transparent 0 18px, rgba(0,0,0,0.4) 18px 22px);
+    background-size: 22px 22px;
+    opacity: 0.7;
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 4px;
+  }
+  /* Trackpad */
   .base::after {
     content: '';
-    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-    width: 60px; height: 4px;
-    background: rgba(0,0,0,0.2);
-    border-radius: 0 0 4px 4px;
+    position: absolute;
+    bottom: 15px; left: 50%; transform: translateX(-50%);
+    width: 120px; height: 60px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.05);
   }
 
-  /* --- Screen/lid --- */
+  /* Screen lid (Wall) */
   .lid {
-    position: absolute; bottom: 100%; left: 0; right: 0;
-    height: 250px;
+    position: absolute;
+    bottom: 50%; left: 0; right: 0;
+    height: 300px;
     background: #232326;
-    border-radius: 10px 10px 0 0;
-    border: 2px solid #505056;
-    border-bottom: 2px solid #333;
+    border-radius: 12px 12px 0 0;
+    border: 3px solid #505056;
     transform-origin: bottom center;
-    transform: rotateX(-90deg);   /* closed */
-    transition: transform 1.2s cubic-bezier(0.4, 0, 0.1, 1);
+    transform: rotateX(-90deg); /* Closed state */
+    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
     transform-style: preserve-3d;
-    box-shadow: inset 0 0 0 6px #111;
+    box-shadow: inset 0 0 0 10px #111;
     z-index: 5;
   }
   .laptop-wrap.open .lid {
-    transform: rotateX(-5deg);      /* open and tilted slightly back */
+    transform: rotateX(10deg);
   }
 
   /* Screen inner */
   .screen-inner {
-    position: absolute; inset: 8px;
+    position: absolute; inset: 12px;
     background: #000;
     border-radius: 4px;
     overflow: hidden;
     display: flex; align-items: center; justify-content: center;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
   }
   .screen-inner img {
     width: 100%; height: 100%;
     object-fit: contain;
     background: #000;
     opacity: 0;
-    transition: opacity .6s ease;
+    transition: opacity .8s ease;
   }
   .screen-inner img.loaded { opacity: 1; }
   .screen-placeholder {
-    width: 100%; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    flex-direction: column; gap: 8px;
-    color: rgba(255,255,255,0.2);
-    font-family: var(--sans); font-size: 11px;
-    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.15);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
   }
-  .screen-placeholder svg { opacity: 0.2; }
 
-  /* Apple-ish logo on lid back */
+  /* Lid back (Apple logo side) */
   .lid-back {
-    position: absolute; inset: 0;
-    backface-visibility: visible;
+    position: absolute; inset: -3px;
+    backface-visibility: hidden;
     background: linear-gradient(160deg, #4a4a50 0%, #2a2a2e 100%);
-    border-radius: 10px 10px 2px 2px;
+    border-radius: 12px 12px 0 0;
+    transform: rotateY(180deg);
     display: flex; align-items: center; justify-content: center;
   }
-
-  /* --- Hinge bar --- */
-  .hinge {
-    width: 380px; height: 8px;
-    background: linear-gradient(to bottom, #5a5a60, #3a3a3e);
-    border-radius: 0 0 1px 1px;
-    position: relative;
-    z-index: 2;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.6);
-  }
-
-  /* --- Base/keyboard --- */
-  .base {
-    width: 380px; height: 26px;
-    background: linear-gradient(160deg, #4a4a50 0%, #2e2e33 100%);
-    border-radius: 2px 2px 8px 8px;
-    position: relative;
-    box-shadow:
-      0 14px 40px rgba(0,0,0,0.7),
-      0 4px 12px rgba(0,0,0,0.5);
-    transform-style: preserve-3d;
-  }
-  /* Keyboard texture */
-  .base::before {
-    content: '';
-    position: absolute;
-    top: 4px; left: 10px; right: 10px; height: 12px;
-    background-image: 
-      repeating-linear-gradient(90deg, transparent 0 10px, rgba(0,0,0,0.3) 10px 12px),
-      repeating-linear-gradient(0deg, transparent 0 4px, rgba(0,0,0,0.3) 4px 6px);
-    background-size: 12px 6px;
-    opacity: 0.6;
-    border-radius: 2px;
-  }
-  /* trackpad slot */
-  .base::after {
-    content: '';
-    position: absolute;
-    bottom: 4px; left: 50%; transform: translateX(-50%);
-    width: 70px; height: 6px;
-    background: rgba(0,0,0,0.4);
-    border-radius: 2px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  .lid-back::after {
+    content: '●'; color: rgba(255,255,255,0.1); font-size: 24px;
   }
 
   /* Ground shadow */
   .shadow {
-    width: 280px; height: 16px;
-    background: radial-gradient(ellipse, rgba(0,0,0,0.5) 0%, transparent 70%);
-    margin: 12px auto 0;
-    filter: blur(6px);
-    animation: shadowDrift 8s ease-in-out infinite alternate;
+    position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%);
+    width: 500px; height: 40px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.6) 0%, transparent 75%);
+    filter: blur(10px);
+    z-index: -1;
   }
   @keyframes shadowDrift {
     0%   { transform: translateY(0) scaleX(1); opacity: .5; }
