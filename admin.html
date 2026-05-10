@@ -777,9 +777,9 @@
       list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center;">작성된 글이 없습니다.</div>';
       return;
     }
-    vibes.sort((a,b) => new Date(b.date) - new Date(a.date));
+    // vibes.sort((a,b) => new Date(b.date) - new Date(a.date)); // Manual order
     let html = '';
-    vibes.forEach(v => {
+    vibes.forEach((v, idx) => {
       const title = v.title?.ko || v.title?.en || v.title || '(제목 없음)';
       const d = new Date(v.date);
       const ds = isNaN(d) ? '' : d.toLocaleDateString();
@@ -790,6 +790,8 @@
             <div style="font-size:11px; color:var(--sub);">${ds}</div>
           </div>
           <div style="display:flex; gap:6px;">
+            <button onclick="moveVibe('${v.id}', -1)" ${idx===0?'disabled':''} style="background:transparent; border:1px solid var(--line); color:var(--sub); padding:4px 8px; border-radius:3px; cursor:pointer; font-size:11px;">▲</button>
+            <button onclick="moveVibe('${v.id}', 1)" ${idx===vibes.length-1?'disabled':''} style="background:transparent; border:1px solid var(--line); color:var(--sub); padding:4px 8px; border-radius:3px; cursor:pointer; font-size:11px;">▼</button>
             <button onclick="editVibe('${v.id}')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:3px; cursor:pointer; font-size:11px;">수정</button>
             <button onclick="deleteVibe('${v.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:3px; cursor:pointer; font-size:11px;">삭제</button>
           </div>
@@ -835,6 +837,17 @@
     
     // scroll to form
     document.querySelector('#pane-vibes').scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  window.moveVibe = async function(id, dir) {
+    let vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+    const idx = vibes.findIndex(v => v.id === id);
+    if (idx === -1) return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= vibes.length) return;
+    [vibes[idx], vibes[newIdx]] = [vibes[newIdx], vibes[idx]];
+    await UI_ARCHIVE.saveItemAsync('ui.archive.vibes', vibes);
+    renderVibesList();
   };
 
   // Lang tabs for posts/vibes
@@ -946,7 +959,8 @@
       list.innerHTML = '<div style="color:var(--sub); font-size:13px; text-align:center;">작성된 글이 없습니다.</div>';
       return;
     }
-    const html = posts.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => {
+    // const html = posts.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(p => {
+    const html = posts.map((p, idx) => {
       const title = p.title?.ko || p.title?.en || p.title || '(제목 없음)';
       return `
         <div style="background:rgba(0,0,0,0.2); border:1px solid var(--line); border-radius:4px; padding:12px; display:flex; justify-content:space-between; align-items:center;">
@@ -955,6 +969,8 @@
             <div style="font-size:11px; color:var(--sub); margin-top:4px;">${new Date(p.date).toLocaleString()}</div>
           </div>
           <div style="display:flex; gap:6px;">
+            <button onclick="movePost('${p.id}', -1)" ${idx===0?'disabled':''} style="background:transparent; border:1px solid var(--line); color:var(--sub); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">▲</button>
+            <button onclick="movePost('${p.id}', 1)" ${idx===posts.length-1?'disabled':''} style="background:transparent; border:1px solid var(--line); color:var(--sub); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">▼</button>
             <button onclick="editPost('${p.id}')" style="background:transparent; border:1px solid var(--gold); color:var(--gold); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">수정</button>
             <button onclick="deletePost('${p.id}')" style="background:transparent; border:1px solid var(--danger); color:var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:11px;">삭제</button>
           </div>
@@ -963,6 +979,17 @@
     }).join('');
     list.innerHTML = html;
   }
+
+  window.movePost = async function(id, dir) {
+    let posts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+    const idx = posts.findIndex(p => p.id === id);
+    if (idx === -1) return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= posts.length) return;
+    [posts[idx], posts[newIdx]] = [posts[newIdx], posts[idx]];
+    await UI_ARCHIVE.saveItemAsync('ui.archive.posts', posts);
+    renderPostsList();
+  };
 
   window.deletePost = async function(id) {
     if(!confirm("이 글을 삭제하시겠습니까?")) return;

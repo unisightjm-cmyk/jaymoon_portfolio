@@ -131,7 +131,7 @@
   /* ── Pages ── */
   .page {
     flex: 1;
-    min-height: 680px;
+    height: 700px; /* Fixed height for book pages */
     position: relative;
   }
   .page.left {
@@ -160,7 +160,12 @@
     padding: 52px 56px 44px;
     overflow-y: auto;
     display: flex; flex-direction: column;
+    scrollbar-width: thin;
+    scrollbar-color: var(--gold) transparent;
   }
+  .page.right::-webkit-scrollbar { width: 5px; }
+  .page.right::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+  .page.right::-webkit-scrollbar-track { background: transparent; }
   /* Spine shadow lines */
   .page.left::after {
     content: '';
@@ -377,7 +382,8 @@
       const saved = localStorage.getItem('ui.archive.posts');
       if (saved) {
         posts = JSON.parse(saved);
-        if (posts && posts.length > 0) posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Remove automatic date sorting to respect manual order from admin
+        // if (posts && posts.length > 0) posts.sort((a, b) => new Date(b.date) - new Date(a.date));
       }
     } catch(e) {}
     renderPost();
@@ -386,7 +392,7 @@
       const remotePosts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
       if (remotePosts && remotePosts.length > 0) {
         posts = remotePosts;
-        posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // if (posts && posts.length > 0) posts.sort((a, b) => new Date(b.date) - new Date(a.date));
         renderPost();
       }
     } catch(e) { console.error(e); }
