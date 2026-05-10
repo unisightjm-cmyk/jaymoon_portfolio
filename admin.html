@@ -359,63 +359,74 @@
     </div>
 
     <!-- ============ Pane: vibes ============ -->
-    <section id="pane-vibes" class="pane" data-pane="vibes">
+    <div class="pane" data-pane="vibes">
       <div class="card">
-        <div class="card-header">
-          <h2>새 Vibe Coding 산출물 추가</h2>
+        <div class="card-head">
+          <h3 id="vibeFormTitle">Vibe Coding 산출물 추가</h3>
+          <span class="meta">vibecoding.html 표시용</span>
         </div>
-        <div class="card-body">
-          <div style="display:flex; gap:10px; margin-bottom:15px; border-bottom:1px solid var(--line); padding-bottom:10px;">
-            <button type="button" class="vibe-lang-btn on" data-lang="ko" style="background:transparent; color:var(--gold); border:1px solid var(--gold); padding:4px 12px; border-radius:4px; cursor:pointer;">한국어</button>
-            <button type="button" class="vibe-lang-btn" data-lang="en" style="background:transparent; color:var(--sub); border:1px solid var(--line); padding:4px 12px; border-radius:4px; cursor:pointer;">English</button>
-          </div>
+        
+        <div class="lang-tabs" style="margin-bottom:20px; border-radius:4px; padding:2px;">
+          <button type="button" class="vibe-lang-btn on" data-lang="ko">한국어</button>
+          <button type="button" class="vibe-lang-btn" data-lang="en">English</button>
+        </div>
 
-          <div class="vibe-lang-group" data-lang="ko">
-            <div class="form-group">
-              <label>프로젝트 제목 (KO)</label>
-              <input type="text" id="vibeTitle_ko" placeholder="예: 나의 첫 AI 프로그램">
-            </div>
-            <div class="form-group">
-              <label>내용 (KO)</label>
-              <textarea id="vibeBody_ko" rows="6" placeholder="자유롭게 작성하세요..."></textarea>
-            </div>
+        <div class="vibe-lang-group" data-lang="ko">
+          <div class="field">
+            <label>프로젝트 제목 (KO)</label>
+            <input id="vibeTitle_ko" placeholder="예: 나의 첫 AI 프로그램" />
           </div>
-
-          <div class="vibe-lang-group" data-lang="en" style="display:none;">
-            <div class="form-group">
-              <label>Project Title (EN)</label>
-              <input type="text" id="vibeTitle_en" placeholder="e.g. My First AI App">
-            </div>
-            <div class="form-group">
-              <label>Content (EN)</label>
-              <textarea id="vibeBody_en" rows="6" placeholder="Write freely..."></textarea>
-            </div>
+          <div class="field">
+            <label>프로젝트 설명 (KO)</label>
+            <textarea id="vibeBody_ko" rows="5" placeholder="프로젝트에 대한 설명을 입력하세요..."></textarea>
           </div>
+        </div>
 
-          <div class="form-group">
+        <div class="vibe-lang-group" data-lang="en" style="display:none;">
+          <div class="field">
+            <label>Project Title (EN)</label>
+            <input id="vibeTitle_en" placeholder="e.g. My First AI App" />
+          </div>
+          <div class="field">
+            <label>Description (EN)</label>
+            <textarea id="vibeBody_en" rows="5" placeholder="Enter project description..."></textarea>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="field">
             <label>게시일 (선택)</label>
-            <input type="date" id="vibeDate">
+            <input type="date" id="vibeDate" />
           </div>
-          <div class="form-group">
-            <label>화면 캡쳐 (사진 업로드)</label>
-            <input type="file" id="vibeImageInput" accept="image/*">
-            <div id="vibeImagePreview" style="margin-top:10px; max-width:200px; max-height:150px; background:var(--bg); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; overflow:hidden; border-radius:4px;">
-              <span style="font-size:12px; color:var(--sub);">미리보기</span>
-            </div>
+          <div class="field">
+            <label>화면 캡쳐 (최대 2MB)</label>
+            <input type="file" id="vibeImageInput" accept="image/*" />
           </div>
-          <button id="addVibeBtn" style="background:var(--gold); color:#1a1a1a; padding:12px 24px; border:none; border-radius:4px; font-weight:bold; font-family:var(--sans); cursor:pointer;">산출물 저장하기</button>
+        </div>
+
+        <div id="vibeImagePreviewBox" style="display:none; margin-top:10px; margin-bottom:20px;">
+          <label style="display:block; font-family:var(--mono); font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--sub); margin-bottom:8px;">이미지 미리보기</label>
+          <div style="width:100%; max-width:400px; height:220px; background:var(--bg); border:1px solid var(--line); border-radius:4px; overflow:hidden; display:flex; align-items:center; justify-content:center;">
+             <img id="vibeImagePreviewImg" style="width:100%; height:100%; object-fit:contain;" />
+          </div>
+        </div>
+
+        <div style="display:flex; gap:10px;">
+          <button id="addVibeBtn" class="primary" style="background:var(--gold); color:var(--ink); border:none; padding:12px 24px; border-radius:4px; font-weight:600; cursor:pointer; font-family:var(--sans); font-size:12px; letter-spacing:.15em; text-transform:uppercase;">산출물 저장하기</button>
+          <button id="cancelVibeBtn" style="display:none; background:transparent; border:1px solid var(--line); color:var(--sub); padding:12px 24px; border-radius:4px; cursor:pointer; font-size:12px; letter-spacing:.15em; text-transform:uppercase;">취소</button>
         </div>
       </div>
-      
-      <div class="card" style="margin-top:20px;">
-        <div class="card-header">
-          <h2>등록된 산출물 목록</h2>
+
+      <div class="card">
+        <div class="card-head">
+          <h3>등록된 산출물 목록</h3>
+          <span class="meta">순서 조정 가능</span>
         </div>
-        <div class="card-body">
-          <div id="vibesList" style="display:flex; flex-direction:column; gap:10px;"></div>
+        <div id="vibesList" style="display:flex; flex-direction:column; gap:12px;">
+          <!-- vibes list injected here -->
         </div>
       </div>
-    </section>
+    </div>
 
     <!-- ============ Pane: messages ============ -->
     <div class="pane" data-pane="messages">
@@ -457,7 +468,7 @@
     <div class="save-bar">
       <div class="status" id="status">변경사항이 자동 저장됩니다 · Auto-saved to localStorage</div>
       <div class="actions">
-        <button id="previewBtn" onclick="window.open('index.html','_blank')">미리보기</button>
+        <button id="previewBtn">미리보기</button>
         <button id="saveBtn" class="primary">저장 / Save</button>
       </div>
     </div>
@@ -702,7 +713,12 @@
     const reader = new FileReader();
     reader.onload = ev => {
       currentVibeImageData = ev.target.result;
-      document.getElementById('vibeImagePreview').innerHTML = `<img src="${currentVibeImageData}" style="width:100%; height:100%; object-fit:cover;">`;
+      const box = document.getElementById('vibeImagePreviewBox');
+      const img = document.getElementById('vibeImagePreviewImg');
+      if (box && img) {
+        img.src = currentVibeImageData;
+        box.style.display = 'block';
+      }
     };
     reader.readAsDataURL(file);
   });
@@ -741,7 +757,9 @@
         };
       }
       editingVibeId = null;
+      document.getElementById('vibeFormTitle').textContent = 'Vibe Coding 산출물 추가';
       document.getElementById('addVibeBtn').textContent = '산출물 저장하기';
+      document.getElementById('cancelVibeBtn').style.display = 'none';
       document.getElementById('addVibeBtn').style.background = 'var(--gold)';
     } else {
       vibes.push({
@@ -758,7 +776,7 @@
     });
     document.getElementById('vibeDate').value = '';
     document.getElementById('vibeImageInput').value = '';
-    document.getElementById('vibeImagePreview').innerHTML = '<span style="font-size:12px; color:var(--sub);">미리보기</span>';
+    document.getElementById('vibeImagePreviewBox').style.display = 'none';
     currentVibeImageData = null;
     
     renderVibesList();
@@ -826,18 +844,43 @@
     
     if (vibe.image) {
       currentVibeImageData = vibe.image;
-      document.getElementById('vibeImagePreview').innerHTML = `<img src="${vibe.image}" style="width:100%; height:100%; object-fit:cover;">`;
+      const box = document.getElementById('vibeImagePreviewBox');
+      const img = document.getElementById('vibeImagePreviewImg');
+      if (box && img) {
+        img.src = vibe.image;
+        box.style.display = 'block';
+      }
     } else {
-      document.getElementById('vibeImagePreview').innerHTML = '<span style="font-size:12px; color:var(--sub);">미리보기</span>';
+      document.getElementById('vibeImagePreviewBox').style.display = 'none';
     }
     
+    document.getElementById('vibeFormTitle').textContent = 'Vibe Coding 산출물 수정';
     const btn = document.getElementById('addVibeBtn');
-    btn.textContent = '산출물 수정 완료 (Update Vibe)';
+    btn.textContent = '수정 완료';
     btn.style.background = '#4CAF50';
+    document.getElementById('cancelVibeBtn').style.display = 'block';
     
     // scroll to form
-    document.querySelector('#pane-vibes').scrollTo({ top: 0, behavior: 'smooth' });
+    const pane = document.querySelector('[data-pane="vibes"]');
+    if (pane) pane.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  document.getElementById('cancelVibeBtn')?.addEventListener('click', () => {
+    editingVibeId = null;
+    document.getElementById('vibeFormTitle').textContent = 'Vibe Coding 산출물 추가';
+    document.getElementById('addVibeBtn').textContent = '산출물 저장하기';
+    document.getElementById('addVibeBtn').style.background = 'var(--gold)';
+    document.getElementById('cancelVibeBtn').style.display = 'none';
+    // clear form
+    ['ko','en'].forEach(l => {
+      document.getElementById('vibeTitle_'+l).value = '';
+      document.getElementById('vibeBody_'+l).value = '';
+    });
+    document.getElementById('vibeDate').value = '';
+    document.getElementById('vibeImageInput').value = '';
+    document.getElementById('vibeImagePreviewBox').style.display = 'none';
+    currentVibeImageData = null;
+  });
 
   window.moveVibe = async function(id, dir) {
     let vibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
@@ -1193,6 +1236,15 @@
       if(!confirm('모든 콘텐츠를 기본값으로 되돌립니다. 계속하시겠습니까?')) return;
       UI_ARCHIVE.reset();
       location.reload();
+    });
+
+    // Dynamic Preview Button
+    document.getElementById('previewBtn').addEventListener('click', () => {
+      const currentPane = document.querySelector('.pane.on')?.dataset.pane;
+      let url = 'index.html';
+      if (currentPane === 'posts') url = 'archive.html';
+      if (currentPane === 'vibes') url = 'vibecoding.html';
+      window.open(url, '_blank');
     });
 
     setPane('brand');
