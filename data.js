@@ -6,6 +6,34 @@
    ========================================================= */
 
 window.UI_ARCHIVE = (function(){
+  // --- Self-Healing Cache Cleanup for Outdated/Corrupted Local Storage ---
+  try {
+    const cachedPostsRaw = localStorage.getItem('ui.archive.posts');
+    if (cachedPostsRaw) {
+      const cachedPosts = JSON.parse(cachedPostsRaw);
+      if (Array.isArray(cachedPosts) && cachedPosts.length > 0) {
+        const hasImagesCount = cachedPosts.filter(p => p && p.image).length;
+        if (hasImagesCount === 0) {
+          console.warn("Detected corrupted posts cache (no images). Self-healing by removing corrupt cache.");
+          localStorage.removeItem('ui.archive.posts');
+        }
+      }
+    }
+  } catch(e) {}
+  try {
+    const cachedVibesRaw = localStorage.getItem('ui.archive.vibes');
+    if (cachedVibesRaw) {
+      const cachedVibes = JSON.parse(cachedVibesRaw);
+      if (Array.isArray(cachedVibes) && cachedVibes.length > 0) {
+        const hasImagesCount = cachedVibes.filter(v => v && v.image).length;
+        if (hasImagesCount === 0) {
+          console.warn("Detected corrupted vibes cache (no images). Self-healing by removing corrupt cache.");
+          localStorage.removeItem('ui.archive.vibes');
+        }
+      }
+    }
+  } catch(e) {}
+
   const KEY = "ui.archive.v4";
   const PASS_KEY = "ui.archive.pass";
   const SESSION_KEY = "ui.archive.session";
@@ -141,14 +169,20 @@ window.UI_ARCHIVE = (function(){
       return deepMerge(DEFAULTS, parsed);
     }catch(e){ return JSON.parse(JSON.stringify(DEFAULTS)); }
   }
-  function saveLocal(data){ localStorage.setItem(KEY, JSON.stringify(data)); }
+  function saveLocal(data){
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+    } catch(e) {
+      console.warn("localStorage quota exceeded for brand/founder state caching.");
+    }
+  }
 
   async function loadAsync() {
     if(!supabaseClient) return loadLocal();
     try {
       const { data, error } = await supabaseClient.from('archive_data').select('value').eq('id', 'state').single();
       if(data && data.value) {
-        saveLocal(deepMerge(DEFAULTS, data.value)); // cache locally
+        saveLocal(deepMerge(DEFAULTS, data.value)); // cache locally (safe)
         return deepMerge(DEFAULTS, data.value);
       }
     } catch(e) { console.error("Supabase load error:", e); }
@@ -165,19 +199,33 @@ window.UI_ARCHIVE = (function(){
   }
 
   async function loadItemAsync(key, defaultValue = []) {
-    if(!supabaseClient) return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue));
+    if(!supabaseClient) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue));
+      } catch(e) { return defaultValue; }
+    }
     try {
       const { data, error } = await supabaseClient.from('archive_data').select('value').eq('id', key).single();
       if(data && data.value) {
-        localStorage.setItem(key, JSON.stringify(data.value));
+        try {
+          localStorage.setItem(key, JSON.stringify(data.value));
+        } catch(localErr) {
+          console.warn(`Failed to cache ${key} in localStorage (possibly quota exceeded).`);
+        }
         return data.value;
       }
     } catch(e) { console.error("Supabase load item error:", e); }
-    return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue));
+    try {
+      return JSON.parse(localStorage.getItem(key) || JSON.stringify(defaultValue));
+    } catch(e) { return defaultValue; }
   }
 
   async function saveItemAsync(key, value) {
-    localStorage.setItem(key, JSON.stringify(value));
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch(localErr) {
+      console.warn(`Failed to save ${key} to localStorage (possibly quota exceeded).`);
+    }
     if(supabaseClient) {
       try {
         await supabaseClient.from('archive_data').upsert({ id: key, value: value });
