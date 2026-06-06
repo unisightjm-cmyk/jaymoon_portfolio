@@ -382,8 +382,8 @@
       const saved = localStorage.getItem('ui.archive.posts');
       if (saved) {
         posts = JSON.parse(saved);
-        // Remove automatic date sorting to respect manual order from admin
-        // if (posts && posts.length > 0) posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort oldest first so Insight #01 = earliest post
+        if (posts && posts.length > 0) posts.sort((a, b) => new Date(a.date) - new Date(b.date));
       }
     } catch(e) {}
     renderPost();
@@ -392,7 +392,8 @@
       const remotePosts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
       if (remotePosts && remotePosts.length > 0) {
         posts = remotePosts;
-        // if (posts && posts.length > 0) posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        // Sort oldest first so Insight #01 = earliest post
+        if (posts && posts.length > 0) posts.sort((a, b) => new Date(a.date) - new Date(b.date));
         renderPost();
       }
     } catch(e) { console.error(e); }
@@ -423,7 +424,7 @@
 
     const post  = posts[currentIndex];
     const total = posts.length;
-    const num   = currentIndex + 1; // display number (1-based, newest = 1)
+    const num   = currentIndex + 1; // display number (1-based, oldest = 1)
 
     // ── Photo ──
     if (post.image) {
@@ -464,7 +465,7 @@
 
     // ── Left page stamp ──
     document.getElementById('pageStamp').textContent =
-      isKo ? `${total - currentIndex}번째 인사이트` : `Insight No. ${num}`;
+      isKo ? `${num}번째 인사이트` : `Insight No. ${num}`;
 
     // ── Index badge ──
     document.getElementById('currentNum').textContent = String(num).padStart(2, '0');
