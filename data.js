@@ -12,9 +12,9 @@ window.UI_ARCHIVE = (function(){
     if (cachedPostsRaw) {
       const cachedPosts = JSON.parse(cachedPostsRaw);
       if (Array.isArray(cachedPosts) && cachedPosts.length > 0) {
-        const hasImagesCount = cachedPosts.filter(p => p && p.image).length;
-        if (hasImagesCount === 0) {
-          console.warn("Detected corrupted posts cache (no images). Self-healing by removing corrupt cache.");
+        const invalidPosts = cachedPosts.filter(p => !p || typeof p !== 'object' || !p.id);
+        if (invalidPosts.length > 0) {
+          console.warn("Detected corrupted posts cache. Self-healing by removing corrupt cache.");
           localStorage.removeItem('ui.archive.posts');
         }
       }
@@ -25,9 +25,9 @@ window.UI_ARCHIVE = (function(){
     if (cachedVibesRaw) {
       const cachedVibes = JSON.parse(cachedVibesRaw);
       if (Array.isArray(cachedVibes) && cachedVibes.length > 0) {
-        const hasImagesCount = cachedVibes.filter(v => v && v.image).length;
-        if (hasImagesCount === 0) {
-          console.warn("Detected corrupted vibes cache (no images). Self-healing by removing corrupt cache.");
+        const invalidVibes = cachedVibes.filter(v => !v || typeof v !== 'object' || !v.id);
+        if (invalidVibes.length > 0) {
+          console.warn("Detected corrupted vibes cache. Self-healing by removing corrupt cache.");
           localStorage.removeItem('ui.archive.vibes');
         }
       }
