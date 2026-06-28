@@ -207,12 +207,30 @@ window.UI_ARCHIVE = (function(){
     try {
       const { data, error } = await supabaseClient.from('archive_data').select('value').eq('id', key).single();
       if(data && data.value) {
+        let mergedVal = data.value;
         try {
-          localStorage.setItem(key, JSON.stringify(data.value));
+          const localRaw = localStorage.getItem(key);
+          if (localRaw) {
+            const localVal = JSON.parse(localRaw);
+            if (Array.isArray(data.value) && Array.isArray(localVal)) {
+              const mergedMap = new Map();
+              // Add database items first
+              data.value.forEach(item => { if (item && item.id) mergedMap.set(item.id, item); });
+              // Merge local items (preserving local changes/new posts written offline)
+              localVal.forEach(item => { if (item && item.id) mergedMap.set(item.id, item); });
+              mergedVal = Array.from(mergedMap.values());
+            }
+          }
+        } catch(mergeErr) {
+          console.warn("Failed to merge local and remote data:", mergeErr);
+        }
+
+        try {
+          localStorage.setItem(key, JSON.stringify(mergedVal));
         } catch(localErr) {
           console.warn(`Failed to cache ${key} in localStorage (possibly quota exceeded).`);
         }
-        return data.value;
+        return mergedVal;
       }
     } catch(e) { console.error("Supabase load item error:", e); }
     try {

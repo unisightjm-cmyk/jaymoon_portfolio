@@ -351,7 +351,13 @@
         <button id="addPostBtn" style="background:var(--gold); color:#1a1a1a; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer; margin-top:10px;">새 글 저장하기</button>
       </div>
       <div class="card">
-        <div class="card-head"><h3>작성된 글 목록</h3><span class="meta">최신순</span></div>
+        <div class="card-head">
+          <h3>작성된 글 목록</h3>
+          <span class="meta" style="display:flex; align-items:center; gap:10px;">
+            <button id="restorePostsBtn" style="background:rgba(201,168,108,0.1); border:1px solid var(--gold); color:var(--gold); padding:4px 10px; border-radius:4px; cursor:pointer; font-family:var(--sans); font-size:11px; transition: background 0.2s;">기존 17개 글 복원/병합</button>
+            <span>최신순</span>
+          </span>
+        </div>
         <div id="postsList" style="display:flex; flex-direction:column; gap:12px;">
           <!-- posts list injected here -->
         </div>
@@ -420,7 +426,10 @@
       <div class="card">
         <div class="card-head">
           <h3>등록된 산출물 목록</h3>
-          <span class="meta">순서 조정 가능</span>
+          <span class="meta" style="display:flex; align-items:center; gap:10px;">
+            <button id="restoreVibesBtn" style="background:rgba(201,168,108,0.1); border:1px solid var(--gold); color:var(--gold); padding:4px 10px; border-radius:4px; cursor:pointer; font-family:var(--sans); font-size:11px; transition: background 0.2s;">기존 8개 산출물 복원/병합</button>
+            <span>순서 조정 가능</span>
+          </span>
         </div>
         <div id="vibesList" style="display:flex; flex-direction:column; gap:12px;">
           <!-- vibes list injected here -->
@@ -1208,6 +1217,70 @@
       UI_ARCHIVE.setPassword(a);
       msg.style.color='var(--gold)'; msg.textContent='비밀번호가 변경되었습니다.';
       document.getElementById('newPw').value=''; document.getElementById('newPw2').value='';
+    });
+
+    // restore posts
+    document.getElementById('restorePostsBtn')?.addEventListener('click', async () => {
+      if(!confirm("기존 17개 글을 복원하여 병합하시겠습니까?\n작성하신 새로운 글도 삭제되지 않고 유지됩니다.")) return;
+      const statusText = document.getElementById('status');
+      statusText.textContent = '글 복원 중…';
+      try {
+        const resp = await fetch('posts_backup.json');
+        if (!resp.ok) throw new Error("서버에서 백업 파일을 찾을 수 없습니다.");
+        const defaultPosts = await resp.json();
+        
+        // Load current posts
+        const currentPosts = await UI_ARCHIVE.loadItemAsync('ui.archive.posts', []);
+        
+        // Merge by id
+        const mergedMap = new Map();
+        defaultPosts.forEach(p => { if (p && p.id) mergedMap.set(p.id, p); });
+        currentPosts.forEach(p => { if (p && p.id) mergedMap.set(p.id, p); });
+        const mergedPosts = Array.from(mergedMap.values());
+        
+        // Sort by date (descending)
+        mergedPosts.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        await UI_ARCHIVE.saveItemAsync('ui.archive.posts', mergedPosts);
+        alert(`인사이트 글 복원 완료! 총 ${mergedPosts.length}개의 글이 저장되었습니다.`);
+        renderPostsList();
+      } catch (err) {
+        alert("복원 실패: " + err.message);
+      } finally {
+        statusText.textContent = '변경사항이 자동 저장됩니다 · Auto-saved to localStorage';
+      }
+    });
+
+    // restore vibes
+    document.getElementById('restoreVibesBtn')?.addEventListener('click', async () => {
+      if(!confirm("기존 8개 Vibe Coding 산출물을 복원하여 병합하시겠습니까?\n작성하신 새로운 산출물도 삭제되지 않고 유지됩니다.")) return;
+      const statusText = document.getElementById('status');
+      statusText.textContent = '산출물 복원 중…';
+      try {
+        const resp = await fetch('vibes_backup.json');
+        if (!resp.ok) throw new Error("서버에서 백업 파일을 찾을 수 없습니다.");
+        const defaultVibes = await resp.json();
+        
+        // Load current vibes
+        const currentVibes = await UI_ARCHIVE.loadItemAsync('ui.archive.vibes', []);
+        
+        // Merge by id
+        const mergedMap = new Map();
+        defaultVibes.forEach(v => { if (v && v.id) mergedMap.set(v.id, v); });
+        currentVibes.forEach(v => { if (v && v.id) mergedMap.set(v.id, v); });
+        const mergedVibes = Array.from(mergedMap.values());
+        
+        // Sort by date (descending)
+        mergedVibes.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        await UI_ARCHIVE.saveItemAsync('ui.archive.vibes', mergedVibes);
+        alert(`Vibe Coding 산출물 복원 완료! 총 ${mergedVibes.length}개의 산출물이 저장되었습니다.`);
+        renderVibesList();
+      } catch (err) {
+        alert("복원 실패: " + err.message);
+      } finally {
+        statusText.textContent = '변경사항이 자동 저장됩니다 · Auto-saved to localStorage';
+      }
     });
 
     // export / import / reset
